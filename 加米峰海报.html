@@ -47,6 +47,91 @@
   .toolbar button.primary { background: var(--orange); border-color: var(--orange); }
   .toolbar button.primary:hover { background: #e55a2b; }
 
+  /* ═══ 底部生成长图按钮 ═══ */
+  .capture-bar {
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+    z-index: 100; pointer-events: none;
+  }
+  .capture-bar button {
+    pointer-events: auto;
+    padding: 14px 32px; border-radius: 30px; border: none;
+    background: linear-gradient(135deg, #FF6B35, #e55a2b);
+    color: #fff; font-size: 16px; font-weight: 600;
+    cursor: pointer; letter-spacing: 1px;
+    box-shadow: 0 8px 30px rgba(255,107,53,0.45);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .capture-bar button:active { transform: scale(0.95); }
+
+  /* ═══ 生成中的loading ═══ */
+  .capture-loading {
+    position: fixed; inset: 0; z-index: 9999;
+    background: rgba(0,0,0,0.85); display: none;
+    flex-direction: column; align-items: center; justify-content: center;
+    color: #fff;
+  }
+  .capture-loading.active { display: flex; }
+  .capture-loading .spinner {
+    width: 40px; height: 40px; border: 3px solid rgba(255,255,255,0.2);
+    border-top-color: var(--orange); border-radius: 50%;
+    animation: spin 0.8s linear infinite; margin-bottom: 16px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ═══ 生成结果预览 ═══ */
+  .capture-result {
+    position: fixed; inset: 0; z-index: 9999;
+    background: #000; display: none;
+    flex-direction: column; align-items: center;
+    overflow-y: auto;
+  }
+  .capture-result.active { display: flex; }
+  .capture-result-header {
+    position: sticky; top: 0; z-index: 10;
+    width: 100%; padding: 16px 20px;
+    background: rgba(0,0,0,0.9);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .capture-result-header span {
+    font-size: 14px; color: rgba(255,255,255,0.7);
+  }
+  .capture-result-header button {
+    padding: 8px 20px; border-radius: 20px; border: none;
+    background: var(--orange); color: #fff; font-size: 14px; font-weight: 600;
+    cursor: pointer;
+  }
+  .capture-result img {
+    width: 100%; max-width: 480px; display: block;
+  }
+  .capture-tip {
+    position: sticky; bottom: 0;
+    width: 100%; padding: 14px; text-align: center;
+    background: rgba(0,0,0,0.9); color: rgba(255,255,255,0.6);
+    font-size: 12px;
+  }
+
+  /* ═══ 多图导出卡片 ═══ */
+  .multi-card {
+    margin: 12px 16px; border-radius: 12px; overflow: hidden;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .multi-card img {
+    width: 100%; display: block;
+  }
+  .multi-card-footer {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 14px;
+  }
+  .multi-card-footer span {
+    font-size: 13px; color: rgba(255,255,255,0.6);
+  }
+  .multi-card-footer button {
+    padding: 6px 16px; border-radius: 16px; border: none;
+    background: #FF6B35; color: #fff; font-size: 13px; font-weight: 600;
+    cursor: pointer;
+  }
+
   /* ═══ 图片占位 ═══ */
   .img-slot {
     position: relative; cursor: pointer;
@@ -304,6 +389,41 @@
   </button>
 </div>
 
+<!-- ═══ 底部生成长图按钮 ═══ -->
+<div class="capture-bar" id="captureBar">
+  <button onclick="capturePage()" style="margin-right:6px;">📸 长图</button>
+  <button onclick="captureSections()">🖼️ 多图</button>
+</div>
+
+<!-- ═══ 生成loading ═══ -->
+<div class="capture-loading" id="captureLoading">
+  <div class="spinner"></div>
+  <div id="captureLoadingText">正在生成海报图片...</div>
+</div>
+
+<!-- ═══ 长图结果 ═══ -->
+<div class="capture-result" id="captureResult">
+  <div class="capture-result-header">
+    <span>长图生成完成</span>
+    <div style="display:flex;gap:8px;">
+      <button onclick="saveImage()" style="background:#FF6B35;color:#fff;border:none;padding:8px 20px;border-radius:20px;font-size:14px;font-weight:600;cursor:pointer;">💾 保存图片</button>
+      <button onclick="closeCaptureResult()" style="background:rgba(255,255,255,0.15);color:#fff;border:none;padding:8px 16px;border-radius:20px;font-size:14px;cursor:pointer;">关闭</button>
+    </div>
+  </div>
+  <img src="" alt="加米峰海报" id="captureImg">
+  <div class="capture-tip">👆 点击「保存图片」下载，然后发到微信群。也可长按图片保存。</div>
+</div>
+
+<!-- ═══ 多图结果 ═══ -->
+<div class="capture-result" id="captureMultiResult">
+  <div class="capture-result-header">
+    <span>多图导出 · 全部发到群里可左右滑动浏览</span>
+    <button onclick="closeMultiResult()" style="background:rgba(255,255,255,0.15);color:#fff;border:none;padding:8px 16px;border-radius:20px;font-size:14px;cursor:pointer;">关闭</button>
+  </div>
+  <div id="multiImageList"></div>
+  <div class="capture-tip">👆 逐张点击「保存」，然后全部选中一起发到微信群 → 自动变成可滑动的图片轮播</div>
+</div>
+
 <!-- ═══ 隐藏的file inputs ═══ -->
 <input type="file" accept="image/*" multiple class="hidden-input" id="batchInput" onchange="batchImport(this)">
 <input type="file" accept="image/*" class="hidden-input" id="singleInput" onchange="singleImport(this)">
@@ -530,13 +650,65 @@
 
 <!-- ═══════════ JS ═══════════ -->
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <script>
-  // ── 图片管理 ──
+  // ── 图片管理（IndexedDB持久化 + data URL） ──
   const TOTAL = 7;
-  const imageData = new Array(TOTAL).fill(null); // 存储blob URL
+  const imageData = new Array(TOTAL).fill(null); // 存储 data URL (base64)
   let currentPickSlot = -1;
+  const DB_NAME = 'yuntu_poster';
+  const DB_STORE = 'images';
 
-  // 打开文件选择器
+  // ── IndexedDB 封装 ──
+  function openDB() {
+    return new Promise((resolve, reject) => {
+      const req = indexedDB.open(DB_NAME, 1);
+      req.onupgradeneeded = () => { req.result.createObjectStore(DB_STORE); };
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+  }
+
+  async function saveImageToDB(slot, dataURL) {
+    const db = await openDB();
+    const tx = db.transaction(DB_STORE, 'readwrite');
+    tx.objectStore(DB_STORE).put(dataURL, 'img_' + slot);
+    return new Promise(r => { tx.oncomplete = r; });
+  }
+
+  async function loadAllFromDB() {
+    const db = await openDB();
+    const tx = db.transaction(DB_STORE, 'readonly');
+    const store = tx.objectStore(DB_STORE);
+    const results = [];
+    for (let i = 0; i < TOTAL; i++) {
+      results.push(new Promise(resolve => {
+        const req = store.get('img_' + i);
+        req.onsuccess = () => resolve(req.result || null);
+        req.onerror = () => resolve(null);
+      }));
+    }
+    return Promise.all(results);
+  }
+
+  // ── 页面启动时恢复图片 ──
+  (async function restoreImages() {
+    const saved = await loadAllFromDB();
+    let restored = 0;
+    for (let i = 0; i < TOTAL; i++) {
+      if (saved[i]) {
+        imageData[i] = saved[i];
+        applyImageToDOM(i, saved[i]);
+        restored++;
+      }
+    }
+    if (restored > 0) {
+      document.getElementById('doneBtn').style.display = 'flex';
+      if (typeof heroSwiper !== 'undefined') heroSwiper.update();
+    }
+  })();
+
+  // ── 文件选择器 ──
   function pickImage(slot) {
     currentPickSlot = slot;
     const inp = document.getElementById('singleInput');
@@ -544,71 +716,75 @@
     inp.click();
   }
 
-  // 单张导入
   function singleImport(input) {
     if (!input.files[0]) return;
-    setImage(currentPickSlot, input.files[0]);
+    readAndSetImage(currentPickSlot, input.files[0]);
   }
 
-  // 批量导入：按文件名排序后按顺序分配
   function batchImport(input) {
     if (!input.files.length) return;
     const files = Array.from(input.files).sort((a,b) => a.name.localeCompare(b.name, 'zh'));
     const count = Math.min(files.length, TOTAL);
+    let done = 0;
     for (let i = 0; i < count; i++) {
-      setImage(i, files[i]);
+      readAndSetImage(i, files[i], () => {
+        done++;
+        if (done >= count) {
+          document.getElementById('doneBtn').style.display = 'flex';
+        }
+      });
     }
-    document.getElementById('doneBtn').style.display = 'flex';
   }
 
-  function setImage(slot, file) {
-    // 释放旧URL
-    if (imageData[slot] && imageData[slot].startsWith('blob:')) {
-      URL.revokeObjectURL(imageData[slot]);
-    }
-    const url = URL.createObjectURL(file);
-    imageData[slot] = url;
+  // 核心：用 FileReader 读取为 data URL（解决 html2canvas 兼容性 + 持久化）
+  function readAndSetImage(slot, file, callback) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const dataURL = e.target.result;
+      imageData[slot] = dataURL;
+      applyImageToDOM(slot, dataURL);
+      saveImageToDB(slot, dataURL); // 持久化到 IndexedDB
+      if (callback) callback();
+      document.getElementById('doneBtn').style.display = 'flex';
+      if (typeof heroSwiper !== 'undefined') heroSwiper.update();
+    };
+    reader.readAsDataURL(file);
+  }
 
-    // 更新主slot
-    updateSlotDOM(slot, url);
-    // 更新画廊slot
-    updateSlotDOM('g' + slot, url);
-    // 更新cover slide
+  // 把 data URL 应用到页面上所有对应位置
+  function applyImageToDOM(slot, dataURL) {
+    updateSlotDOM(slot, dataURL);
+    updateSlotDOM('g' + slot, dataURL);
     if (slot < 4) {
       const slideImg = document.querySelector(`.slide-img[data-slot="${slot}"]`);
-      if (slideImg) { slideImg.src = url; slideImg.style.display = 'block'; }
+      if (slideImg) { slideImg.src = dataURL; slideImg.style.display = 'block'; }
     }
-
-    // 更新lightbox
-    document.getElementById('doneBtn').style.display = 'flex';
-
-    // 更新swiper
-    if (typeof heroSwiper !== 'undefined') heroSwiper.update();
   }
 
-  function updateSlotDOM(id, url) {
+  // 更新 slot DOM：优先用 <img> 标签（不用 background-image，方便 html2canvas 捕获）
+  function updateSlotDOM(id, dataURL) {
     const el = document.getElementById('slot-' + id);
     if (!el) return;
     el.classList.add('has-image');
-    // 设置背景图
-    el.style.backgroundImage = `url(${url})`;
+
+    // 查找或创建 img 元素
+    let img = el.querySelector('img:not(.slide-img)');
+    if (!img) {
+      img = document.createElement('img');
+      img.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:2;';
+      el.appendChild(img);
+    }
+    img.src = dataURL;
+    img.style.display = 'block';
+
+    // 同时设置背景图作为fallback
+    el.style.backgroundImage = `url(${dataURL})`;
     el.style.backgroundSize = 'cover';
     el.style.backgroundPosition = 'center';
-    // 如果有img子元素也更新
-    const img = el.querySelector('img');
-    if (img) { img.src = url; img.style.display = 'block'; }
   }
 
   function scrollToTop() {
     document.getElementById('top').scrollIntoView({ behavior: 'smooth' });
-  }
-
-  // 尝试从localStorage恢复（仅存引用，刷新后丢失，用indexedDB备选）
-  // 简单处理：页面刷新后图片丢失，需重新导入
-  // 一键导入后自动存indexedDB
-  function saveToDB() {
-    // 暂略——批量导入后图片存在于内存中，刷新页面需重新导入
-    // 对于H5分享场景，通常不会刷新
   }
 
   // ── Hero轮播 ──
@@ -683,6 +859,499 @@
     const diff = touchX - e.changedTouches[0].clientX;
     if (Math.abs(diff) > 50) { diff > 0 ? nextImage() : prevImage(); }
   });
+
+  // ── 生成长图分享 ──
+  let lastCaptureCanvas = null; // 保存最近生成的海报canvas，供下载用
+
+  async function capturePage() {
+    const loading = document.getElementById('captureLoading');
+    const captureBar = document.getElementById('captureBar');
+    const toolbar = document.getElementById('toolbar');
+
+    toolbar.style.display = 'none';
+    captureBar.style.display = 'none';
+    loading.classList.add('active');
+
+    const hasImages = imageData.some(d => d !== null);
+    if (!hasImages) {
+      loading.classList.remove('active');
+      toolbar.style.display = '';
+      captureBar.style.display = '';
+      alert('请先导入图片再生成长图');
+      return;
+    }
+
+    const poster = buildPosterDOM();
+    poster.style.position = 'absolute';
+    poster.style.left = '-9999px';
+    poster.style.top = '0';
+    poster.style.zIndex = '-1';
+    document.body.appendChild(poster);
+
+    await new Promise(r => setTimeout(r, 500));
+
+    try {
+      const canvas = await html2canvas(poster, {
+        useCORS: true,
+        allowTaint: true,
+        scale: 2,
+        backgroundColor: '#1a1a2e',
+        width: 480,
+        height: poster.scrollHeight,
+        windowWidth: 480,
+        windowHeight: poster.scrollHeight,
+      });
+
+      lastCaptureCanvas = canvas; // 存下来供保存按钮使用
+
+      const imgData = canvas.toDataURL('image/png');
+      const result = document.getElementById('captureResult');
+      const img = document.getElementById('captureImg');
+      img.src = imgData;
+      result.classList.add('active');
+    } catch (err) {
+      alert('生成失败: ' + err.message);
+    }
+
+    document.body.removeChild(poster);
+    loading.classList.remove('active');
+    toolbar.style.display = '';
+    captureBar.style.display = '';
+  }
+
+  function saveImage() {
+    if (!lastCaptureCanvas) {
+      alert('请先生成长图');
+      return;
+    }
+    // 将canvas转成blob，触发下载
+    lastCaptureCanvas.toBlob(function(blob) {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = '加米峰海报_云途世界.png';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      // 延迟释放URL
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }, 'image/png');
+  }
+
+  // ── 多图导出（微信图片轮播） ──
+  let sectionCanvases = []; // 存储每张section的canvas
+
+  async function captureSections() {
+    const loading = document.getElementById('captureLoading');
+    const loadingText = document.getElementById('captureLoadingText');
+    const captureBar = document.getElementById('captureBar');
+    const toolbar = document.getElementById('toolbar');
+
+    const hasImages = imageData.some(d => d !== null);
+    if (!hasImages) {
+      alert('请先导入图片再生成长图');
+      return;
+    }
+
+    toolbar.style.display = 'none';
+    captureBar.style.display = 'none';
+    loading.classList.add('active');
+    sectionCanvases = [];
+
+    const sections = buildPosterSections();
+    const W = 480;
+
+    for (let i = 0; i < sections.length; i++) {
+      loadingText.textContent = `正在生成第 ${i+1}/${sections.length} 张...`;
+
+      const el = sections[i];
+      el.style.position = 'absolute';
+      el.style.left = '-9999px';
+      el.style.top = '0';
+      el.style.zIndex = '-1';
+      document.body.appendChild(el);
+
+      await new Promise(r => setTimeout(r, 300));
+
+      try {
+        const canvas = await html2canvas(el, {
+          useCORS: true, allowTaint: true, scale: 2,
+          backgroundColor: '#1a1a2e',
+          width: W, height: el.scrollHeight,
+          windowWidth: W, windowHeight: el.scrollHeight,
+        });
+        sectionCanvases.push(canvas);
+      } catch (err) {
+        sectionCanvases.push(null);
+      }
+
+      document.body.removeChild(el);
+    }
+
+    loading.classList.remove('active');
+    toolbar.style.display = '';
+    captureBar.style.display = '';
+
+    // 显示结果
+    const result = document.getElementById('captureMultiResult');
+    const list = document.getElementById('multiImageList');
+    list.innerHTML = '';
+
+    const names = ['封面', '神山介绍', '行程体验', '两天一夜行程', '往期实拍', '报名信息'];
+
+    sectionCanvases.forEach((canvas, i) => {
+      if (!canvas) return;
+      const imgData = canvas.toDataURL('image/png');
+
+      const card = document.createElement('div');
+      card.className = 'multi-card';
+
+      const img = document.createElement('img');
+      img.src = imgData;
+      card.appendChild(img);
+
+      const footer = document.createElement('div');
+      footer.className = 'multi-card-footer';
+      footer.innerHTML = `<span>${i+1}. ${names[i] || '第'+(i+1)+'张'}</span>`;
+
+      const btn = document.createElement('button');
+      btn.textContent = '💾 保存';
+      btn.onclick = (function(c, idx) {
+        return function() {
+          c.toBlob(function(blob) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `加米峰_${idx+1}_${names[idx] || idx+1}.png`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+          }, 'image/png');
+        };
+      })(canvas, i);
+      footer.appendChild(btn);
+      card.appendChild(footer);
+      list.appendChild(card);
+    });
+
+    result.classList.add('active');
+  }
+
+  function closeMultiResult() {
+    document.getElementById('captureMultiResult').classList.remove('active');
+  }
+
+  // ── 构建海报分节DOM（每节独立导出） ──
+  function buildPosterSections() {
+    const W = 480;
+    const sections = [];
+
+    // 封面区
+    const heroImg = imageData[0] || imageData.find(d => d);
+    const hero = mkDiv(`width:${W}px;background:#1a1a2e;color:#fff;font-family:'Noto Sans SC',sans-serif;`);
+    const heroInner = mkDiv(`width:100%;height:${Math.round(W*1.4)}px;position:relative;overflow:hidden;background:#0f1825;`);
+    if (heroImg) {
+      const img = document.createElement('img');
+      img.src = heroImg;
+      img.style.cssText = 'width:100%;height:100%;object-fit:cover;position:absolute;inset:0;';
+      heroInner.appendChild(img);
+    }
+    heroInner.appendChild(mkDiv('position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.25) 50%, rgba(0,0,0,0.78) 78%, rgba(0,0,0,0.9) 100%);'));
+    heroInner.appendChild(mkDiv('position:absolute;top:18px;left:24px;display:flex;align-items:center;gap:8px;z-index:5;',
+      '<div style="width:10px;height:10px;border-radius:3px;background:#FF6B35;"></div><div style="font-size:16px;font-weight:700;letter-spacing:2px;">云途<span style="color:#FF6B35;">世界</span></div>'));
+    const infoBox = mkDiv('position:absolute;bottom:0;left:0;right:0;z-index:5;padding:0 28px 36px;');
+    infoBox.innerHTML = `
+      <div style="display:inline-block;font-size:11px;letter-spacing:3px;color:#FF6B35;border:1px solid rgba(255,107,53,0.4);border-radius:4px;padding:4px 10px;margin-bottom:14px;font-weight:500;">川西秘境 · 2天1夜</div>
+      <h1 style="font-family:'Ma Shan Zheng',cursive;font-size:48px;font-weight:400;letter-spacing:4px;line-height:1.25;margin:0 0 6px;">加米峰<span style="color:#FF6B35;">·</span><br>日照金山</h1>
+      <p style="font-family:'Ma Shan Zheng',cursive;font-size:18px;color:rgba(255,255,255,0.85);margin:0 0 14px;line-height:1.6;">在巴塔哥尼亚同款神山，<br>等一场日出</p>
+      <div style="display:flex;gap:16px;font-size:13px;color:rgba(255,255,255,0.85);margin-bottom:18px;">
+        <span><span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:#FF6B35;margin-right:5px;vertical-align:middle;"></span>5.23 — 5.24</span>
+        <span><span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:#FF6B35;margin-right:5px;vertical-align:middle;"></span>嘉州路集合</span>
+        <span><span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:#FF6B35;margin-right:5px;vertical-align:middle;"></span>卫峰线+日出线</span>
+      </div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.4);letter-spacing:1px;">行摄无疆 视界由我</div>`;
+    heroInner.appendChild(infoBox);
+    hero.appendChild(heroInner);
+    sections.push(hero);
+
+    // 神山介绍
+    sections.push(sectionBlock(
+      'DESTINATION', '大将军黑色神山',
+      '加米峰，藏语称<b>「玛波东伽热拉」</b>——大将军黑色神山。苯教四大神山之一，主峰<b>5387米</b>，金字塔形山体如刀削斧劈，被称为<b>「川西多洛米蒂」「中国巴塔哥尼亚」</b>。尚未商业化的小众秘境，趁人潮未至，去看她最美的样子。',
+      imageData[4],
+      [{ num:'5387', unit:'m', label:'主峰海拔' },{ num:'2', unit:'条线', label:'卫峰观景 + 山脊日出' },{ num:'4', unit:'h', label:'成都出发车程' },{ num:'6-10', unit:'月', label:'最佳徒步季节' }]
+    ));
+
+    // 三大体验
+    const expSec = mkDiv(`width:${W}px;background:#0f1825;color:#fff;font-family:'Noto Sans SC',sans-serif;padding:44px 24px;`);
+    expSec.innerHTML = `<div style="font-size:10px;letter-spacing:3px;color:#FF6B35;margin-bottom:10px;font-weight:600;">HIGHLIGHTS</div><h2 style="font-family:'Ma Shan Zheng',cursive;font-size:26px;font-weight:400;margin:0 0 16px;letter-spacing:2px;">这一趟你会经历</h2>`;
+    [{ icon:'🌄', title:'卫峰线 · 日落金山', desc:'Day1下午轻装出发，登4450m观景台直面冰岩壁与金色晚霞', img: imageData[5] },
+     { icon:'☀️', title:'山脊线 · 云海日出', desc:'Day2凌晨4点出发，360°全景日照金山与翻涌云海', img: imageData[6] }].forEach(card => {
+      const ce = mkDiv('position:relative;border-radius:16px;overflow:hidden;height:200px;margin-bottom:12px;');
+      if (card.img) { const im = document.createElement('img'); im.src = card.img; im.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;'; ce.appendChild(im); }
+      else { ce.style.background = 'rgba(255,255,255,0.04)'; }
+      ce.appendChild(mkDiv('position:absolute;inset:0;z-index:1;background:linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.78) 100%);'));
+      ce.appendChild(mkDiv('position:relative;z-index:2;padding:18px;', `<div style="font-size:24px;margin-bottom:4px;">${card.icon}</div><h4 style="font-size:17px;font-weight:700;margin:0 0 4px;">${card.title}</h4><p style="font-size:12px;color:rgba(255,255,255,0.7);line-height:1.5;margin:0;">${card.desc}</p>`));
+      expSec.appendChild(ce);
+    });
+    sections.push(expSec);
+
+    // 行程时间线
+    const schSec = mkDiv(`width:${W}px;background:#1a1a2e;color:#fff;font-family:'Noto Sans SC',sans-serif;padding:44px 24px;`);
+    schSec.innerHTML = `<div style="font-size:10px;letter-spacing:3px;color:#FF6B35;margin-bottom:10px;font-weight:600;">ITINERARY</div><h2 style="font-family:'Ma Shan Zheng',cursive;font-size:26px;font-weight:400;margin:0 0 6px;letter-spacing:2px;">两天一夜行程</h2>`;
+    schSec.appendChild(dayTimeline('DAY 1 · 5月23日 周六', [['07:00','嘉州路集合出发','包车前往康定姑咱镇'],['11:30','姑咱镇午餐','牦牛肉汤锅，海拔1400m适应休整'],['13:00','换乘越野车上山','碎石机耕道1.5h，沿途雪山渐显'],['14:30','抵达小木屋营地（3750m）','分配床位，休整适应海拔'],['15:30','轻装出发 · 卫峰线','徒步3.5km登4450m观景台，守候日落金山'],['21:00','星空夜话','营地晚餐，抬头即是银河']]));
+    schSec.appendChild(dayTimeline('DAY 2 · 5月24日 周日', [['04:00','摸黑出发 · 山脊日出线','头灯必备，徒步登4400m山脊观景台'],['06:30','日照金山 + 云海日出','这一刻值得所有早起的困倦'],['08:00','返回营地早餐','收拾行装，最后再看一眼神山'],['10:00','乘中转车下山','换乘大巴返程'],['约 21:00','回到成都','满载照片和回忆']]));
+    sections.push(schSec);
+
+    // 实拍画廊
+    const galSec = mkDiv(`width:${W}px;background:#0f1825;color:#fff;font-family:'Noto Sans SC',sans-serif;padding:44px 24px;`);
+    galSec.innerHTML = `<div style="font-size:10px;letter-spacing:3px;color:#FF6B35;margin-bottom:10px;font-weight:600;">GALLERY</div><h2 style="font-family:'Ma Shan Zheng',cursive;font-size:26px;font-weight:400;margin:0 0 16px;letter-spacing:2px;">往期实拍</h2>`;
+    const grid = mkDiv('display:grid;grid-template-columns:1fr 1fr;gap:8px;');
+    imageData.forEach((d, i) => {
+      if (!d) return;
+      const item = mkDiv('border-radius:10px;overflow:hidden;' + (i === 6 ? 'grid-column:span 2;aspect-ratio:3/2;' : 'aspect-ratio:1;'));
+      const im = document.createElement('img'); im.src = d; im.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
+      item.appendChild(im); grid.appendChild(item);
+    });
+    galSec.appendChild(grid);
+    sections.push(galSec);
+
+    // 报名区
+    const ctaSec = mkDiv(`width:${W}px;background:#1a1a2e;color:#fff;font-family:'Noto Sans SC',sans-serif;padding:44px 24px;text-align:center;`);
+    ctaSec.innerHTML = `
+      <div style="font-size:10px;letter-spacing:3px;color:#FF6B35;margin-bottom:10px;font-weight:600;">JOIN US</div>
+      <h2 style="font-family:'Ma Shan Zheng',cursive;font-size:26px;font-weight:400;margin:0 0 6px;letter-spacing:2px;">一起去加米峰</h2>
+      <p style="font-size:14px;color:rgba(255,255,255,0.6);margin:0 0 16px;">限定20人 · 报满即止</p>
+      <div style="display:flex;justify-content:center;gap:16px;font-size:13px;color:rgba(255,255,255,0.85);margin-bottom:20px;">
+        <span><span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:#FF6B35;margin-right:5px;vertical-align:middle;"></span>5.23 — 5.24</span>
+        <span><span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:#FF6B35;margin-right:5px;vertical-align:middle;"></span>嘉州路集合</span>
+      </div>
+      <div style="width:100px;height:100px;border:1.5px dashed rgba(255,255,255,0.18);border-radius:14px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.28);font-size:12px;">扫码报名</div>
+      <div style="display:inline-block;padding:14px 40px;background:linear-gradient(135deg,#FF6B35,#e55a2b);color:#fff;border-radius:30px;font-size:16px;font-weight:600;letter-spacing:1px;">微信咨询 / 报名 →</div>
+      <p style="margin-top:14px;font-size:12px;color:rgba(255,255,255,0.35);">行摄无疆 视界由我</p>`;
+    sections.push(ctaSec);
+
+    return sections;
+  }
+
+  function buildPosterDOM() {
+    const W = 480;
+    const container = document.createElement('div');
+    container.style.cssText = `
+      width:${W}px; background:#1a1a2e; color:#fff; font-family:'Noto Sans SC',sans-serif;
+      padding-bottom:20px;
+    `;
+
+    // ── 封面区 ──
+    const heroImg = imageData[0] || imageData.find(d => d);
+    const hero = mkDiv(`
+      width:100%; height:${Math.round(W*1.4)}px; position:relative; overflow:hidden;
+      background:#0f1825;
+    `);
+    if (heroImg) {
+      const img = document.createElement('img');
+      img.src = heroImg;
+      img.style.cssText = 'width:100%;height:100%;object-fit:cover;position:absolute;inset:0;';
+      hero.appendChild(img);
+    }
+    // 渐变遮罩
+    hero.appendChild(mkDiv(`
+      position:absolute;inset:0;
+      background:linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.25) 50%, rgba(0,0,0,0.78) 78%, rgba(0,0,0,0.9) 100%);
+    `));
+    // Logo
+    hero.appendChild(mkDiv('position:absolute;top:18px;left:24px;display:flex;align-items:center;gap:8px;z-index:5;', `
+      <div style="width:10px;height:10px;border-radius:3px;background:#FF6B35;"></div>
+      <div style="font-size:16px;font-weight:700;letter-spacing:2px;">云途<span style="color:#FF6B35;">世界</span></div>
+    `));
+    // 底部信息
+    const infoBox = mkDiv(`
+      position:absolute;bottom:0;left:0;right:0;z-index:5;padding:0 28px 36px;
+    `);
+    infoBox.innerHTML = `
+      <div style="display:inline-block;font-size:11px;letter-spacing:3px;color:#FF6B35;border:1px solid rgba(255,107,53,0.4);border-radius:4px;padding:4px 10px;margin-bottom:14px;font-weight:500;">川西秘境 · 2天1夜</div>
+      <h1 style="font-family:'Ma Shan Zheng',cursive;font-size:48px;font-weight:400;letter-spacing:4px;line-height:1.25;margin:0 0 6px;">加米峰<span style="color:#FF6B35;">·</span><br>日照金山</h1>
+      <p style="font-family:'Ma Shan Zheng',cursive;font-size:18px;color:rgba(255,255,255,0.85);margin:0 0 14px;line-height:1.6;">在巴塔哥尼亚同款神山，<br>等一场日出</p>
+      <div style="display:flex;gap:16px;font-size:13px;color:rgba(255,255,255,0.85);margin-bottom:18px;">
+        <span><span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:#FF6B35;margin-right:5px;vertical-align:middle;"></span>5.23 — 5.24</span>
+        <span><span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:#FF6B35;margin-right:5px;vertical-align:middle;"></span>嘉州路集合</span>
+        <span><span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:#FF6B35;margin-right:5px;vertical-align:middle;"></span>卫峰线+日出线</span>
+      </div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.4);letter-spacing:1px;">行摄无疆 视界由我</div>
+    `;
+    hero.appendChild(infoBox);
+    container.appendChild(hero);
+
+    // ── 神山介绍 ──
+    container.appendChild(sectionBlock(
+      'DESTINATION', '大将军黑色神山',
+      '加米峰，藏语称<b>「玛波东伽热拉」</b>——大将军黑色神山。苯教四大神山之一，主峰<b>5387米</b>，金字塔形山体如刀削斧劈，被称为<b>「川西多洛米蒂」「中国巴塔哥尼亚」</b>。尚未商业化的小众秘境，趁人潮未至，去看她最美的样子。',
+      imageData[4],
+      [
+        { num:'5387', unit:'m', label:'主峰海拔' },
+        { num:'2', unit:'条线', label:'卫峰观景 + 山脊日出' },
+        { num:'4', unit:'h', label:'成都出发车程' },
+        { num:'6-10', unit:'月', label:'最佳徒步季节' }
+      ]
+    ));
+
+    // ── 三大体验 ──
+    const expSection = mkDiv('padding:44px 24px;background:#0f1825;');
+    expSection.innerHTML = `
+      <div style="font-size:10px;letter-spacing:3px;color:#FF6B35;margin-bottom:10px;font-weight:600;">HIGHLIGHTS</div>
+      <h2 style="font-family:'Ma Shan Zheng',cursive;font-size:26px;font-weight:400;margin:0 0 16px;letter-spacing:2px;">这一趟你会经历</h2>
+    `;
+    // 体验卡片
+    [
+      { icon:'🌄', title:'卫峰线 · 日落金山', desc:'Day1下午轻装出发，登4450m观景台直面冰岩壁与金色晚霞', img: imageData[5] },
+      { icon:'☀️', title:'山脊线 · 云海日出', desc:'Day2凌晨4点出发，360°全景日照金山与翻涌云海', img: imageData[6] }
+    ].forEach(card => {
+      const cardEl = mkDiv(`
+        position:relative;border-radius:16px;overflow:hidden;height:200px;margin-bottom:12px;
+      `);
+      if (card.img) {
+        const img = document.createElement('img');
+        img.src = card.img;
+        img.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;';
+        cardEl.appendChild(img);
+      } else {
+        cardEl.style.background = 'rgba(255,255,255,0.04)';
+      }
+      cardEl.appendChild(mkDiv(`
+        position:absolute;inset:0;z-index:1;
+        background:linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.78) 100%);
+      `));
+      cardEl.appendChild(mkDiv('position:relative;z-index:2;padding:18px;', `
+        <div style="font-size:24px;margin-bottom:4px;">${card.icon}</div>
+        <h4 style="font-size:17px;font-weight:700;margin:0 0 4px;">${card.title}</h4>
+        <p style="font-size:12px;color:rgba(255,255,255,0.7);line-height:1.5;margin:0;">${card.desc}</p>
+      `));
+      expSection.appendChild(cardEl);
+    });
+    container.appendChild(expSection);
+
+    // ── 行程时间线 ──
+    const schSection = mkDiv('padding:44px 24px;');
+    schSection.innerHTML = `
+      <div style="font-size:10px;letter-spacing:3px;color:#FF6B35;margin-bottom:10px;font-weight:600;">ITINERARY</div>
+      <h2 style="font-family:'Ma Shan Zheng',cursive;font-size:26px;font-weight:400;margin:0 0 6px;letter-spacing:2px;">两天一夜行程</h2>
+    `;
+    schSection.appendChild(dayTimeline('DAY 1 · 5月23日 周六', [
+      ['07:00','嘉州路集合出发','包车前往康定姑咱镇，车上破冰相识'],
+      ['11:30','姑咱镇午餐','牦牛肉汤锅，海拔1400m适应休整'],
+      ['13:00','换乘越野车上山','碎石机耕道1.5h，沿途雪山渐显'],
+      ['14:30','抵达小木屋营地（3750m）','分配床位，休整适应海拔'],
+      ['15:30','轻装出发 · 卫峰线','徒步3.5km登4450m观景台，守候日落金山'],
+      ['21:00','星空夜话','营地晚餐，抬头即是银河'],
+    ]));
+    schSection.appendChild(dayTimeline('DAY 2 · 5月24日 周日', [
+      ['04:00','摸黑出发 · 山脊日出线','头灯必备，徒步登4400m山脊观景台'],
+      ['06:30','日照金山 + 云海日出','这一刻值得所有早起的困倦'],
+      ['08:00','返回营地早餐','收拾行装，最后再看一眼神山'],
+      ['10:00','乘中转车下山','换乘大巴返程'],
+      ['约 21:00','回到成都','满载照片和回忆'],
+    ]));
+    container.appendChild(schSection);
+
+    // ── 实拍画廊 ──
+    const galSection = mkDiv('padding:44px 24px;background:#0f1825;');
+    galSection.innerHTML = `
+      <div style="font-size:10px;letter-spacing:3px;color:#FF6B35;margin-bottom:10px;font-weight:600;">GALLERY</div>
+      <h2 style="font-family:'Ma Shan Zheng',cursive;font-size:26px;font-weight:400;margin:0 0 16px;letter-spacing:2px;">往期实拍</h2>
+    `;
+    const grid = mkDiv('display:grid;grid-template-columns:1fr 1fr;gap:8px;');
+    imageData.forEach((d, i) => {
+      if (!d) return;
+      const item = mkDiv('border-radius:10px;overflow:hidden;' + (i === 6 ? 'grid-column:span 2;aspect-ratio:3/2;' : 'aspect-ratio:1;'));
+      const img = document.createElement('img');
+      img.src = d;
+      img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
+      item.appendChild(img);
+      grid.appendChild(item);
+    });
+    galSection.appendChild(grid);
+    container.appendChild(galSection);
+
+    // ── 报名区 ──
+    const ctaSection = mkDiv('padding:44px 24px;text-align:center;');
+    ctaSection.innerHTML = `
+      <div style="font-size:10px;letter-spacing:3px;color:#FF6B35;margin-bottom:10px;font-weight:600;">JOIN US</div>
+      <h2 style="font-family:'Ma Shan Zheng',cursive;font-size:26px;font-weight:400;margin:0 0 6px;letter-spacing:2px;">一起去加米峰</h2>
+      <p style="font-size:14px;color:rgba(255,255,255,0.6);margin:0 0 16px;">限定20人 · 报满即止</p>
+      <div style="display:flex;justify-content:center;gap:16px;font-size:13px;color:rgba(255,255,255,0.85);margin-bottom:20px;">
+        <span><span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:#FF6B35;margin-right:5px;vertical-align:middle;"></span>5.23 — 5.24</span>
+        <span><span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:#FF6B35;margin-right:5px;vertical-align:middle;"></span>嘉州路集合</span>
+      </div>
+      <div style="width:100px;height:100px;border:1.5px dashed rgba(255,255,255,0.18);border-radius:14px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.28);font-size:12px;">扫码报名</div>
+      <div style="display:inline-block;padding:14px 40px;background:linear-gradient(135deg,#FF6B35,#e55a2b);color:#fff;border-radius:30px;font-size:16px;font-weight:600;letter-spacing:1px;">微信咨询 / 报名 →</div>
+      <p style="margin-top:14px;font-size:12px;color:rgba(255,255,255,0.35);">行摄无疆 视界由我</p>
+    `;
+    container.appendChild(ctaSection);
+
+    // Footer
+    container.appendChild(mkDiv('text-align:center;padding:20px;font-size:11px;color:rgba(255,255,255,0.25);border-top:1px solid rgba(255,255,255,0.05);',
+      '© 云途世界户外俱乐部 · 让每一次出发都有意义'
+    ));
+
+    return container;
+  }
+
+  // ── 构建辅助函数 ──
+  function mkDiv(style, html) {
+    const d = document.createElement('div');
+    d.style.cssText = style;
+    if (html) d.innerHTML = html;
+    return d;
+  }
+
+  function sectionBlock(badge, title, desc, imgDataURL, stats) {
+    const sec = mkDiv('padding:44px 24px;background:#1a1a2e;');
+    let h = `<div style="font-size:10px;letter-spacing:3px;color:#FF6B35;margin-bottom:10px;font-weight:600;">${badge}</div>`;
+    h += `<h2 style="font-family:'Ma Shan Zheng',cursive;font-size:26px;font-weight:400;margin:0 0 6px;letter-spacing:2px;">${title}</h2>`;
+    h += `<p style="font-size:14px;color:rgba(255,255,255,0.6);line-height:1.8;margin:0 0 20px;">${desc}</p>`;
+    sec.innerHTML = h;
+
+    if (imgDataURL) {
+      const imgDiv = mkDiv('width:100%;height:240px;border-radius:16px;margin-bottom:20px;overflow:hidden;position:relative;');
+      const img = document.createElement('img');
+      img.src = imgDataURL;
+      img.style.cssText = 'width:100%;height:100%;object-fit:cover;';
+      imgDiv.appendChild(img);
+      sec.appendChild(imgDiv);
+    }
+
+    const grid = mkDiv('display:grid;grid-template-columns:1fr 1fr;gap:10px;');
+    stats.forEach(s => {
+      grid.appendChild(mkDiv('background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:18px 14px;', `
+        <div style="font-size:26px;font-weight:900;color:#FF6B35;line-height:1;margin-bottom:4px;">${s.num}<span style="font-size:13px;font-weight:400;">${s.unit}</span></div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.5);">${s.label}</div>
+      `));
+    });
+    sec.appendChild(grid);
+    return sec;
+  }
+
+  function dayTimeline(dayLabel, items) {
+    const wrap = mkDiv('');
+    wrap.innerHTML = `<div style="display:inline-block;font-size:10px;letter-spacing:2px;background:rgba(255,107,53,0.12);color:#FF6B35;padding:4px 12px;border-radius:20px;margin-bottom:12px;margin-top:4px;">${dayLabel}</div>`;
+    const tl = mkDiv('position:relative;padding-left:26px;');
+    tl.innerHTML = '<div style="position:absolute;left:7px;top:0;bottom:0;width:1.5px;background:rgba(255,107,53,0.25);border-radius:1px;"></div>';
+    items.forEach(item => {
+      tl.appendChild(mkDiv('position:relative;margin-bottom:18px;', `
+        <div style="position:absolute;left:-19px;top:3px;width:10px;height:10px;border-radius:50%;background:#FF6B35;border:2px solid rgba(255,107,53,0.35);"></div>
+        <div style="font-size:12px;color:#FF6B35;font-weight:600;margin-bottom:2px;">${item[0]}</div>
+        <div style="font-size:15px;font-weight:600;margin-bottom:2px;">${item[1]}</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.55);line-height:1.5;">${item[2]}</div>
+      `));
+    });
+    wrap.appendChild(tl);
+    return wrap;
+  }
+
+  function closeCaptureResult() {
+    document.getElementById('captureResult').classList.remove('active');
+  }
 
   // ── 画廊grid中每张图点lightbox ──
   document.getElementById('galleryGrid').addEventListener('click', function(e) {
