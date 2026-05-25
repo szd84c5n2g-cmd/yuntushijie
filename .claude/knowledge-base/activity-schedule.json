@@ -1,0 +1,24 @@
+{
+  "generated_at": null,
+  "period": null,
+  "activities": [],
+  "mock_example": {
+    "date": "6.7",
+    "activity_name": "竹林溯溪·森系人像",
+    "type": "溯溪",
+    "difficulty": "★★",
+    "route_id": "r003",
+    "weather": {
+      "condition": "晴",
+      "temp_high": 28,
+      "temp_low": 22,
+      "rain_probability": 5
+    },
+    "weather_grade": "适宜",
+    "leaders": ["阿杰"],
+    "photo_score": 5,
+    "recommended_template": "清新感",
+    "recommended_materials": ["m005", "m006"],
+    "status": "draft"
+  }
+}

@@ -1,0 +1,8 @@
+# 本地配置文件（每台电脑不同，不要上传）
+.claude/settings.local.json
+
+# macOS 系统文件
+.DS_Store
+
+# Windows 缩略图缓存
+Thumbs.db

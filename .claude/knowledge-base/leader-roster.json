@@ -1,0 +1,37 @@
+{
+  "updated_at": "2026-05-21",
+  "leaders": [
+    {
+      "id": "l001",
+      "name": "墨涵",
+      "gender": "男",
+      "expertise": ["雪山", "摄影", "溯溪", "轻徒步", "桨板", "骑行", "夜爬", "城市活动"],
+      "certifications": [],
+      "strength_tags": ["摄影强", "雪山经验丰富", "全地形覆盖", "综合能力全面"],
+      "max_weekly_activities": 3,
+      "max_monthly_activities": 8,
+      "current_month_frequency": 0,
+      "schedule": [],
+      "notes": "全能型领队，雪山和摄影为第一优先级；全天可带队"
+    },
+    {
+      "id": "l002",
+      "name": "喜帖街",
+      "gender": "男",
+      "expertise": ["夜爬", "骑行", "轻徒步", "桨板", "溯溪", "摄影", "雪山", "城市活动"],
+      "certifications": [],
+      "strength_tags": ["城市/社交活动经验丰富", "骑行专业", "全地形覆盖", "活跃氛围"],
+      "max_weekly_activities": 3,
+      "max_monthly_activities": 8,
+      "current_month_frequency": 0,
+      "schedule": [],
+      "notes": "全能型领队，夜爬和城市活动为第一优先级；全天可带队"
+    }
+  ],
+  "pairing_rules": {
+    "description": "双领队搭配原则：墨涵主摄影/雪山线，喜帖街主城市/社交线。两人全能互补，可交叉覆盖全类型活动。",
+    "ideal_pairs": [
+      {"combo": "墨涵+喜帖街", "strength": "全能互补 — 墨涵主攻摄影登山线，喜帖街主攻城市社交线，也可互为副领队"}
+    ]
+  }
+}

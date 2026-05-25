@@ -1,0 +1,78 @@
+{
+  "brand_name": "云途世界",
+  "slogan": "行摄无疆 视界由我",
+  "english_tagline": "Explore Without Limits, See Through Your Own Eyes",
+  "tone_keywords": ["真实", "温暖", "专业", "年轻", "探索感"],
+  "tone_description": "像一位懂户外的好友在分享，真挚不做作。用真实体验打动人心，避免过度营销腔。",
+  "forbidden_words": ["绝对安全", "保证登顶", "包过", "100%", "史上最", "无敌", "全网第一", "零风险", "万无一失"],
+  "forbidden_patterns": [
+    "过度夸张的形容词堆砌（如'绝美仙境震撼灵魂'）",
+    "虚假紧迫感话术（如'最后3个名额''限时抢购'）",
+    "贬低其他俱乐部或组织",
+    "使用'征服自然''战胜雪山'等不尊重自然的表述"
+  ],
+  "preferred_expressions": {
+    "instead_of": "征服雪山",
+    "use": "走近雪山/感受雪山"
+  },
+  "logo_specs": {
+    "primary_color": "#FF6B35",
+    "primary_color_name": "云途橙",
+    "secondary_color": "#2B2B2B",
+    "secondary_color_name": "岩黑",
+    "accent_color": "#4ECDC4",
+    "accent_color_name": "湖水蓝",
+    "font_family": "Noto Sans SC",
+    "logo_position": "左上角",
+    "min_clear_space": "logo高度的1.5倍"
+  },
+  "poster_templates": {
+    "山野感": {
+      "style": "大图+粗犷字体",
+      "suitable_for": ["雪山", "重装徒步", "攀岩", "越野跑"],
+      "color_palette": "深色调+高对比度，以岩黑(#2B2B2B)为底，云途橙(#FF6B35)为点缀",
+      "font_style": "粗黑体/Impact风格，标题字号大且有力量感",
+      "layout": "全屏大图背景 + 底部半透明遮罩叠加文字信息"
+    },
+    "清新感": {
+      "style": "浅色调+手写体点缀",
+      "suitable_for": ["溯溪", "桨板", "轻徒步", "露营", "骑行"],
+      "color_palette": "浅绿(#E8F5E9)+天蓝(#81D4FA)+白，湖水蓝(#4ECDC4)为点缀",
+      "font_style": "圆体/手写风格，轻松活泼",
+      "layout": "上下分栏：上图(占60%)+下白底文字区(占40%)"
+    },
+    "城市感": {
+      "style": "夜景+霓虹光效",
+      "suitable_for": ["夜爬", "城市骑行", "室内攀岩", "城市徒步"],
+      "color_palette": "深蓝(#1A1A2E)+霓虹紫+云途橙点缀",
+      "font_style": "现代无衬线体，线条干净利落",
+      "layout": "图片叠加深色渐变+文字居中排布"
+    }
+  },
+  "social_platforms": {
+    "朋友圈": {
+      "max_chars": 120,
+      "tone": "像朋友分享生活，轻松真诚",
+      "emoji_policy": "适量使用，2-4个为宜",
+      "structure": "亮点钩子(1句) + 体验描述(2-3句) + 号召/期待(1句)"
+    },
+    "小红书": {
+      "max_chars": 1000,
+      "tone": "种草笔记风格，实用信息+视觉吸引力",
+      "emoji_policy": "丰富使用，增加可读性",
+      "hashtag_count": "5-8个",
+      "structure": "封面标题 + 路线信息 + 个人体验 + 实用tips + 号召互动 + 标签"
+    },
+    "公众号": {
+      "tone": "深度回顾，有叙事感",
+      "structure": "引言(场景/金句钩子) + 活动回顾(按时间线) + 参与者故事(1-2则) + 下周预告"
+    }
+  },
+  "mandatory_poster_elements": [
+    "云途世界 logo",
+    "slogan: 行摄无疆 视界由我",
+    "报名二维码占位区",
+    "日期与活动名称",
+    "领队信息"
+  ]
+}

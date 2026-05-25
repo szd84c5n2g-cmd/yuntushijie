@@ -1,0 +1,38 @@
+{
+  "name": "云途智囊 Agent 工作流",
+  "owner": {
+    "name": "云途视界"
+  },
+  "plugins": [
+    {
+      "name": "orchestrator",
+      "description": "云途智囊总调度。理解用户意图，路由至五位专业Agent，协调多Agent协作流程。",
+      "source": "./orchestrator"
+    },
+    {
+      "name": "marketing-agent",
+      "description": "云小途·营销运营官。品牌守门员+内容发动机。选题灵感、三平台文案、自动回复、周报。",
+      "source": "./marketing-agent"
+    },
+    {
+      "name": "route-planner",
+      "description": "云小途·探路者。安全底线+出片率保障。路线草案、拍摄点标记、风险评估、路线优化。",
+      "source": "./route-planner"
+    },
+    {
+      "name": "image-qa",
+      "description": "云小途·光影。视觉品控+影像包装。废片筛选、人像分组、高光视频脚本、素材归档。",
+      "source": "./image-qa"
+    },
+    {
+      "name": "activity-scheduler",
+      "description": "云小途·日历。天气+人力+新鲜感平衡。天气分析、季节匹配、类型均衡、领队调配、日历输出。",
+      "source": "./activity-scheduler"
+    },
+    {
+      "name": "poster-designer",
+      "description": "云小途·画板。排期到海报一键生成。素材匹配、文案填充、模板套用、多尺寸输出。",
+      "source": "./poster-designer"
+    }
+  ]
+}

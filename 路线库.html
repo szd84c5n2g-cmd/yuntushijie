@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>云途视界 · 路线库</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: #0f0f1a;
+    color: #e0e0e0;
+    padding: 20px;
+  }
+  .container { max-width: 1200px; margin: 0 auto; }
+
+  /* Header */
+  .header {
+    text-align: center;
+    padding: 30px 0;
+  }
+  .header h1 {
+    font-size: 28px;
+    color: #FF6B35;
+    margin-bottom: 6px;
+  }
+  .header .sub { color: #888; font-size: 14px; }
+
+  /* Stats bar */
+  .stats {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+  .stat-card {
+    background: #1a1a2e;
+    border: 1px solid #2a2a4a;
+    border-radius: 10px;
+    padding: 14px 20px;
+    text-align: center;
+    min-width: 90px;
+  }
+  .stat-card .num { font-size: 26px; font-weight: 700; }
+  .stat-card .label { font-size: 12px; color: #888; margin-top: 2px; }
+  .stat-card.total .num { color: #FF6B35; }
+  .stat-card.active .num { color: #4CAF50; }
+  .stat-card.unexplored .num { color: #FF9800; }
+
+  /* Filters */
+  .filters {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    align-items: center;
+    justify-content: center;
+  }
+  .filters select, .filters input {
+    background: #1a1a2e;
+    border: 1px solid #2a2a4a;
+    color: #e0e0e0;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 14px;
+    outline: none;
+  }
+  .filters select:focus, .filters input:focus { border-color: #FF6B35; }
+  .filters input { width: 200px; }
+  .filters input::placeholder { color: #666; }
+
+  /* Table */
+  .table-wrap {
+    background: #1a1a2e;
+    border: 1px solid #2a2a4a;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  thead th {
+    background: #12122a;
+    padding: 12px 10px;
+    text-align: left;
+    font-weight: 600;
+    color: #aaa;
+    border-bottom: 1px solid #2a2a4a;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+  }
+  thead th:hover { color: #FF6B35; }
+  thead th .arrow { font-size: 10px; margin-left: 4px; }
+  tbody td {
+    padding: 10px;
+    border-bottom: 1px solid #1f1f3a;
+    vertical-align: middle;
+  }
+  tbody tr:hover { background: #1f1f3a; }
+  tbody tr.unexplored { opacity: 0.45; }
+  tbody tr.unexplored:hover { opacity: 0.7; }
+
+  /* Badges */
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .badge-active { background: #1b5e20; color: #81C784; }
+  .badge-unexplored { background: #4a2800; color: #FFB74D; }
+  .badge-type {
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    white-space: nowrap;
+  }
+  .type-徒步 { background: #1a237e; color: #90CAF9; }
+  .type-爬山 { background: #4a148c; color: #CE93D8; }
+  .type-探洞 { background: #1b5e20; color: #A5D6A7; }
+  .type-溯溪 { background: #01579b; color: #81D4FA; }
+
+  /* Stars */
+  .stars { color: #FFB74D; white-space: nowrap; }
+  .scenery { color: #4FC3F7; white-space: nowrap; }
+
+  /* Difficulty bar */
+  .diff-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .diff-bar .s { color: #FFB74D; }
+  .diff-bar .r { color: #90CAF9; font-size: 11px; margin-left: 2px; }
+
+  .count { color: #888; font-size: 12px; margin-left: 8px; }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    body { padding: 10px; }
+    .stats { gap: 8px; }
+    .stat-card { padding: 10px 14px; min-width: 70px; }
+    .stat-card .num { font-size: 20px; }
+    .filters { flex-direction: column; align-items: stretch; }
+    .filters input { width: 100%; }
+    .table-wrap { overflow-x: auto; }
+    table { font-size: 11px; }
+    thead th, tbody td { padding: 8px 6px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <h1>云途视界 · 路线库</h1>
+    <div class="sub">重庆周边 + 川西 + 赤水 ｜ 共 41 条路线 ｜ 更新于 2026-05-21</div>
+  </div>
+
+  <div class="stats" id="stats"></div>
+
+  <div class="filters">
+    <select id="filterRegion"><option value="">全部区域</option></select>
+    <select id="filterType"><option value="">全部类型</option></select>
+    <select id="filterStatus"><option value="">全部状态</option><option value="active">已探线</option><option value="unexplored">未探线</option></select>
+    <select id="filterNovice"><option value="">全部难度</option><option value="true">适合新手</option><option value="false">不适合新手</option></select>
+    <input id="searchInput" placeholder="搜索路线名称..." type="text">
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th data-sort="name">路线名称 <span class="arrow"></span></th>
+          <th data-sort="region">区域</th>
+          <th data-sort="type">类型</th>
+          <th data-sort="distance">里程(km)</th>
+          <th data-sort="elevation">爬升(m)</th>
+          <th data-sort="difficulty">难度</th>
+          <th data-sort="scenery">风景</th>
+          <th data-sort="status">状态</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+
+</div>
+
+<script>
+const DATA = [
+  {"id":"r001","name":"马尿水环线","region":"南川区","type":"徒步","distance_km":15,"elevation_gain_m":660,"difficulty_stars":2,"scenery_stars":3,"difficulty_rainy_stars":3,"scenery_rainy_stars":2,"status":"active","novice_friendly":true,"start_point":"风吹岭露营基地"},
+  {"id":"r002","name":"华容险道","region":"南川区","type":"徒步","distance_km":13,"elevation_gain_m":500,"difficulty_stars":2,"scenery_stars":3,"difficulty_rainy_stars":4,"scenery_rainy_stars":2,"status":"active","novice_friendly":true,"start_point":"山水村村委会"},
+  {"id":"r003","name":"悬崖村","region":"南川区","type":"徒步","distance_km":16,"elevation_gain_m":1150,"difficulty_stars":null,"scenery_stars":null,"status":"unexplored","novice_friendly":false},
+  {"id":"r004","name":"漆树堂环线","region":"南川区","type":"徒步","distance_km":10,"elevation_gain_m":500,"difficulty_stars":2,"scenery_stars":4,"difficulty_rainy_stars":3,"scenery_rainy_stars":3,"status":"active","novice_friendly":true},
+  {"id":"r005","name":"石人峰","region":"南川区","type":"爬山","distance_km":12,"elevation_gain_m":900,"difficulty_stars":3,"scenery_stars":3,"difficulty_rainy_stars":4,"scenery_rainy_stars":2,"status":"active","novice_friendly":false,"start_point":"独马头"},
+  {"id":"r006","name":"柏芷山（折返）","region":"南川区","type":"徒步","distance_km":13,"elevation_gain_m":770,"difficulty_stars":2,"scenery_stars":3,"difficulty_rainy_stars":3,"scenery_rainy_stars":2,"status":"active","novice_friendly":true,"start_point":"柏芷山国际度假公园"},
+  {"id":"r007","name":"大拇指山海螺沟","region":"南川区","type":"徒步","distance_km":17,"elevation_gain_m":800,"difficulty_stars":null,"scenery_stars":null,"status":"unexplored","novice_friendly":false},
+  {"id":"r008","name":"锦屏峰环线","region":"南川区","type":"徒步","distance_km":14,"elevation_gain_m":800,"difficulty_stars":null,"scenery_stars":null,"status":"unexplored","novice_friendly":false},
+  {"id":"r009","name":"笋人天梯","region":"南川区","type":"爬山","distance_km":11,"elevation_gain_m":700,"difficulty_stars":2,"scenery_stars":3,"difficulty_rainy_stars":4,"scenery_rainy_stars":2,"status":"active","novice_friendly":true},
+  {"id":"r010","name":"金山湖（AB）","region":"南川区","type":"徒步","distance_km":11,"elevation_gain_m":450,"difficulty_stars":2,"scenery_stars":4,"difficulty_rainy_stars":3,"scenery_rainy_stars":3,"status":"active","novice_friendly":true,"start_point":"烛台峰停车场"},
+  {"id":"r011","name":"石膏洞","region":"南川区","type":"探洞","distance_km":8,"elevation_gain_m":200,"difficulty_stars":2,"scenery_stars":2,"difficulty_rainy_stars":2,"scenery_rainy_stars":2,"status":"active","novice_friendly":true},
+  {"id":"r012","name":"落岩山风车岭","region":"南川区","type":"徒步","distance_km":8,"elevation_gain_m":400,"difficulty_stars":null,"scenery_stars":null,"status":"unexplored","novice_friendly":false},
+  {"id":"r013","name":"缙云山夜爬","region":"北碚区","type":"徒步","distance_km":8,"elevation_gain_m":680,"difficulty_stars":2,"scenery_stars":2,"difficulty_rainy_stars":2,"scenery_rainy_stars":2,"status":"active","novice_friendly":true,"start_point":"健身梯道"},
+  {"id":"r014","name":"道明寺天坑","region":"北碚区","type":"徒步","distance_km":18,"elevation_gain_m":700,"difficulty_stars":null,"scenery_stars":null,"status":"unexplored","novice_friendly":false},
+  {"id":"r015","name":"胜天湖环线","region":"北碚区","type":"徒步","distance_km":15,"elevation_gain_m":250,"difficulty_stars":3,"scenery_stars":4,"difficulty_rainy_stars":4,"scenery_rainy_stars":2,"status":"active","novice_friendly":false,"start_point":"胜天湖停车场"},
+  {"id":"r016","name":"龙王村","region":"北碚区","type":"徒步","distance_km":8,"elevation_gain_m":500,"difficulty_stars":2,"scenery_stars":2,"difficulty_rainy_stars":2,"scenery_rainy_stars":2,"status":"active","novice_friendly":true,"start_point":"龙王村草莓园"},
+  {"id":"r017","name":"青峰山","region":"北碚区","type":"徒步","distance_km":18,"elevation_gain_m":1000,"difficulty_stars":null,"scenery_stars":null,"status":"unexplored","novice_friendly":false},
+  {"id":"r018","name":"南山12峰","region":"南岸区","type":"徒步","distance_km":22,"elevation_gain_m":1900,"difficulty_stars":4,"scenery_stars":2,"difficulty_rainy_stars":5,"scenery_rainy_stars":2,"status":"active","novice_friendly":false,"start_point":"涂山地铁站"},
+  {"id":"r019","name":"清溪沟","region":"江津区","type":"徒步","distance_km":9,"elevation_gain_m":270,"difficulty_stars":1,"scenery_stars":4,"difficulty_rainy_stars":2,"scenery_rainy_stars":3,"status":"active","novice_friendly":true,"start_point":"贵波山庄"},
+  {"id":"r020","name":"莫家沟","region":"江津区","type":"徒步","distance_km":9,"elevation_gain_m":1000,"difficulty_stars":null,"scenery_stars":null,"status":"unexplored","novice_friendly":false},
+  {"id":"r021","name":"大圆洞","region":"江津区","type":"徒步","distance_km":12,"elevation_gain_m":600,"difficulty_stars":2,"scenery_stars":4,"difficulty_rainy_stars":2,"scenery_rainy_stars":3,"status":"active","novice_friendly":true,"start_point":"江津大圆洞停车场"},
+  {"id":"r022","name":"柏林之巅","region":"江津区","type":"徒步","distance_km":8,"elevation_gain_m":600,"difficulty_stars":null,"scenery_stars":null,"status":"unexplored","novice_friendly":false},
+  {"id":"r023","name":"插旗山","region":"江津区","type":"爬山","distance_km":9,"elevation_gain_m":800,"difficulty_stars":null,"scenery_stars":null,"status":"unexplored","novice_friendly":false},
+  {"id":"r024","name":"万银古寨","region":"武隆区","type":"徒步","distance_km":10,"elevation_gain_m":900,"difficulty_stars":null,"scenery_stars":null,"status":"unexplored","novice_friendly":false},
+  {"id":"r025","name":"赵云山（折返打卡）","region":"武隆区","type":"徒步","distance_km":8,"elevation_gain_m":400,"difficulty_stars":1,"scenery_stars":4,"difficulty_rainy_stars":1,"scenery_rainy_stars":3,"status":"active","novice_friendly":true},
+  {"id":"r026","name":"青龙峡","region":"武隆区","type":"徒步","distance_km":13,"elevation_gain_m":300,"difficulty_stars":2,"scenery_stars":3,"difficulty_rainy_stars":2,"scenery_rainy_stars":2,"status":"active","novice_friendly":true},
+  {"id":"r027","name":"阿拉丁沟环线","region":"巴南区","type":"徒步","distance_km":11,"elevation_gain_m":400,"difficulty_stars":1,"scenery_stars":2,"difficulty_rainy_stars":2,"scenery_rainy_stars":1,"status":"active","novice_friendly":true},
+  {"id":"r028","name":"圣灯山环线","region":"巴南区","type":"徒步","distance_km":13,"elevation_gain_m":400,"difficulty_stars":null,"scenery_stars":null,"status":"unexplored","novice_friendly":false},
+  {"id":"r029","name":"桫椤沟环线","region":"涪陵区","type":"徒步","distance_km":8,"elevation_gain_m":540,"difficulty_stars":1,"scenery_stars":3,"difficulty_rainy_stars":2,"scenery_rainy_stars":3,"status":"active","novice_friendly":true},
+  {"id":"r030","name":"七鹿坪环线","region":"涪陵区","type":"徒步","distance_km":15,"elevation_gain_m":380,"difficulty_stars":1,"scenery_stars":4,"difficulty_rainy_stars":2,"scenery_rainy_stars":3,"status":"active","novice_friendly":true,"start_point":"六妹农家乐"},
+  {"id":"r031","name":"大青洞","region":"涪陵区","type":"徒步","distance_km":14,"elevation_gain_m":800,"difficulty_stars":null,"scenery_stars":null,"status":"unexplored","novice_friendly":false},
+  {"id":"r032","name":"乌江龙脊","region":"涪陵区","type":"徒步","distance_km":12,"elevation_gain_m":700,"difficulty_stars":null,"scenery_stars":null,"status":"unexplored","novice_friendly":false},
+  {"id":"r033","name":"夜爬半山崖线","region":"主城区","type":"徒步","distance_km":8,"elevation_gain_m":350,"difficulty_stars":1,"scenery_stars":3,"difficulty_rainy_stars":1,"scenery_rainy_stars":3,"status":"active","novice_friendly":true},
+  {"id":"r034","name":"铁山坪环线","region":"江北区","type":"徒步","distance_km":15,"elevation_gain_m":600,"difficulty_stars":2,"scenery_stars":3,"difficulty_rainy_stars":2,"scenery_rainy_stars":3,"status":"active","novice_friendly":true},
+  {"id":"r035","name":"狮子槽","region":"万盛区","type":"徒步","distance_km":12,"elevation_gain_m":630,"difficulty_stars":2,"scenery_stars":4,"difficulty_rainy_stars":3,"scenery_rainy_stars":3,"status":"active","novice_friendly":true},
+  {"id":"r036","name":"夹璧山","region":"丰都区","type":"徒步","distance_km":10,"elevation_gain_m":860,"difficulty_stars":2,"scenery_stars":4,"difficulty_rainy_stars":5,"scenery_rainy_stars":3,"status":"active","novice_friendly":true,"start_point":"新和场村村名居委会"},
+  {"id":"r037","name":"玉带山","region":"丰都区","type":"徒步","distance_km":12,"elevation_gain_m":400,"difficulty_stars":2,"scenery_stars":4,"difficulty_rainy_stars":3,"scenery_rainy_stars":3,"status":"active","novice_friendly":true},
+  {"id":"r038","name":"九顶山","region":"川西","type":"爬山","distance_km":17,"elevation_gain_m":1600,"difficulty_stars":3,"scenery_stars":5,"difficulty_rainy_stars":5,"scenery_rainy_stars":3,"status":"active","novice_friendly":false,"start_point":"夫妻树停车场"},
+  {"id":"r039","name":"龙华山","region":"川西","type":"爬山","distance_km":8,"elevation_gain_m":900,"difficulty_stars":3,"scenery_stars":5,"difficulty_rainy_stars":5,"scenery_rainy_stars":3,"status":"active","novice_friendly":false,"start_point":"泸定（转运）"},
+  {"id":"r040","name":"野马海子","region":"川西","type":"徒步","distance_km":8,"elevation_gain_m":260,"difficulty_stars":2,"scenery_stars":5,"difficulty_rainy_stars":2,"scenery_rainy_stars":3,"status":"active","novice_friendly":true,"start_point":"康定"},
+  {"id":"r041","name":"赤水瀑布群","region":"贵州赤水","type":"溯溪","distance_km":6,"elevation_gain_m":200,"difficulty_stars":2,"scenery_stars":4,"difficulty_rainy_stars":3,"scenery_rainy_stars":2,"status":"active","novice_friendly":true,"start_point":"可停车/有厕所/可补给"}
+];
+
+let sortKey = null;
+let sortDir = 1;
+
+function starStr(n, cls) {
+  if (n === null) return '<span style="color:#666">—</span>';
+  let s = '';
+  for (let i = 0; i < 5; i++) s += i < n ? '★' : '☆';
+  return `<span class="${cls}">${s}</span>`;
+}
+
+function renderStats(filtered) {
+  const total = DATA.length;
+  const active = DATA.filter(r => r.status === 'active').length;
+  const unexplored = DATA.filter(r => r.status === 'unexplored').length;
+  document.getElementById('stats').innerHTML = `
+    <div class="stat-card total"><div class="num">${filtered.length}</div><div class="label">当前显示</div></div>
+    <div class="stat-card active"><div class="num">${active}</div><div class="label">已探线</div></div>
+    <div class="stat-card unexplored"><div class="num">${unexplored}</div><div class="label">未探线</div></div>
+    <div class="stat-card"><div class="num" style="color:#CE93D8">${total}</div><div class="label">路线总数</div></div>
+  `;
+}
+
+function renderTable() {
+  const filters = {
+    region: document.getElementById('filterRegion').value,
+    type: document.getElementById('filterType').value,
+    status: document.getElementById('filterStatus').value,
+    novice: document.getElementById('filterNovice').value,
+    search: document.getElementById('searchInput').value.toLowerCase()
+  };
+
+  let filtered = DATA.filter(r => {
+    if (filters.region && r.region !== filters.region) return false;
+    if (filters.type && r.type !== filters.type) return false;
+    if (filters.status && r.status !== filters.status) return false;
+    if (filters.novice && String(r.novice_friendly) !== filters.novice) return false;
+    if (filters.search && !r.name.toLowerCase().includes(filters.search)) return false;
+    return true;
+  });
+
+  if (sortKey) {
+    filtered.sort((a, b) => {
+      let va = a[sortKey], vb = b[sortKey];
+      if (va === null) va = -1;
+      if (vb === null) vb = -1;
+      if (typeof va === 'string') va = va.toLowerCase();
+      if (typeof vb === 'string') vb = vb.toLowerCase();
+      return (va > vb ? 1 : va < vb ? -1 : 0) * sortDir;
+    });
+  }
+
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = filtered.map(r => `
+    <tr class="${r.status === 'unexplored' ? 'unexplored' : ''}">
+      <td><strong>${r.name}</strong>${r.start_point ? `<br><span style="color:#888;font-size:11px">📍 ${r.start_point}</span>` : ''}</td>
+      <td>${r.region}</td>
+      <td><span class="badge-type type-${r.type}">${r.type}</span></td>
+      <td>${r.distance_km}</td>
+      <td>${r.elevation_gain_m}</td>
+      <td>
+        <div class="diff-bar">
+          <span>${starStr(r.difficulty_stars, 's')}</span>
+          ${r.difficulty_rainy_stars !== null && r.difficulty_rainy_stars !== undefined ? `<span class="r">☔${starStr(r.difficulty_rainy_stars, 's')}</span>` : ''}
+        </div>
+      </td>
+      <td>
+        <div class="diff-bar">
+          <span>${starStr(r.scenery_stars, 'scenery')}</span>
+          ${r.scenery_rainy_stars !== null && r.scenery_rainy_stars !== undefined ? `<span class="r">☔${starStr(r.scenery_rainy_stars, 'scenery')}</span>` : ''}
+        </div>
+      </td>
+      <td><span class="badge badge-${r.status === 'active' ? 'active' : 'unexplored'}">${r.status === 'active' ? '已探' : '未探'}</span></td>
+    </tr>
+  `).join('');
+
+  document.getElementById('stats').querySelector('.stat-card.total .num').textContent = filtered.length;
+}
+
+function populateFilters() {
+  const regions = [...new Set(DATA.map(r => r.region))].sort();
+  const types = [...new Set(DATA.map(r => r.type))].sort();
+  const regionSel = document.getElementById('filterRegion');
+  const typeSel = document.getElementById('filterType');
+  regions.forEach(r => { const o = document.createElement('option'); o.value = r; o.textContent = r; regionSel.appendChild(o); });
+  types.forEach(t => { const o = document.createElement('option'); o.value = t; o.textContent = t; typeSel.appendChild(o); });
+}
+
+document.querySelectorAll('#filterRegion, #filterType, #filterStatus, #filterNovice').forEach(el => el.addEventListener('change', renderTable));
+document.getElementById('searchInput').addEventListener('input', renderTable);
+
+document.querySelectorAll('thead th[data-sort]').forEach(th => {
+  th.addEventListener('click', () => {
+    const key = th.dataset.sort;
+    if (sortKey === key) { sortDir *= -1; }
+    else { sortKey = key; sortDir = 1; }
+    document.querySelectorAll('thead th .arrow').forEach(a => a.textContent = '');
+    th.querySelector('.arrow').textContent = sortDir === 1 ? '▲' : '▼';
+    renderTable();
+  });
+});
+
+populateFilters();
+renderStats(DATA);
+renderTable();
+</script>
+</body>
+</html>

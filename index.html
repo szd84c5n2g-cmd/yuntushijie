@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>云途世界 — 户外俱乐部</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --primary: #2b2b2b;
+    --accent: #ff6b35;
+    --accent2: #4ecdc4;
+    --bg: #f7f7f7;
+    --card-bg: #ffffff;
+    --text: #2b2b2b;
+    --text-light: #6b6b6b;
+    --border: #e8e8e8;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--text);
+    background: var(--bg);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── nav ── */
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(255,255,255,.92); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 40px;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 64px;
+  }
+  .nav-logo { font-size: 20px; font-weight: 700; letter-spacing: 2px; color: var(--primary); }
+  .nav-logo span { color: var(--accent); }
+  .nav-links { display: flex; gap: 32px; list-style: none; }
+  .nav-links a { text-decoration: none; color: var(--text); font-size: 14px; font-weight: 500; transition: color .2s; }
+  .nav-links a:hover { color: var(--accent); }
+
+  /* ── hero ── */
+  .hero {
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    text-align: center;
+    background: linear-gradient(160deg, #1a1a2e 0%, #16213e 40%, #0f3460 70%, #1a1a2e 100%);
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: ''; position: absolute; inset: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 200"><path d="M0 120 C200 80, 400 170, 600 110 C800 50, 1000 150, 1200 100 L1200 200 L0 200 Z" fill="rgba(255,255,255,.03)"/><path d="M0 150 C300 100, 500 180, 700 140 C900 100, 1100 160, 1200 130 L1200 200 L0 200 Z" fill="rgba(255,255,255,.02)"/></svg>') no-repeat bottom/cover;
+  }
+  .hero-content { position: relative; z-index: 2; padding: 0 20px; }
+  .hero-tag { font-size: 14px; letter-spacing: 6px; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; font-weight: 500; }
+  .hero h1 { font-size: clamp(48px, 8vw, 88px); font-weight: 900; letter-spacing: 4px; margin-bottom: 16px; line-height: 1.1; }
+  .hero h1 span { color: var(--accent); }
+  .hero-subtitle { font-size: 20px; font-weight: 300; color: rgba(255,255,255,.7); max-width: 480px; margin: 0 auto 40px; }
+  .hero-cta {
+    display: inline-block; padding: 14px 48px;
+    background: var(--accent); color: #fff; border-radius: 40px;
+    font-size: 15px; font-weight: 600; letter-spacing: 2px;
+    text-decoration: none; transition: transform .2s, box-shadow .2s;
+  }
+  .hero-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(255,107,53,.35); }
+  .hero-scroll {
+    position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    color: rgba(255,255,255,.4); font-size: 12px; letter-spacing: 2px;
+  }
+  .hero-scroll::after {
+    content: ''; width: 1px; height: 40px;
+    background: linear-gradient(rgba(255,255,255,.4), transparent);
+  }
+
+  /* ── sections common ── */
+  section { padding: 100px 40px; }
+  .section-tag { font-size: 12px; letter-spacing: 4px; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; font-weight: 600; }
+  .section-title { font-size: clamp(28px, 4vw, 40px); font-weight: 700; letter-spacing: 2px; margin-bottom: 16px; }
+  .section-desc { color: var(--text-light); max-width: 540px; font-size: 16px; line-height: 1.8; }
+  .container { max-width: 1100px; margin: 0 auto; }
+
+  /* ── about ── */
+  .about-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 80px;
+    align-items: center;
+  }
+  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .stat-card {
+    background: var(--card-bg); border-radius: 16px; padding: 32px 28px;
+    box-shadow: 0 2px 20px rgba(0,0,0,.04); transition: transform .2s;
+  }
+  .stat-card:hover { transform: translateY(-4px); }
+  .stat-num { font-size: 36px; font-weight: 900; color: var(--accent); line-height: 1; }
+  .stat-label { font-size: 14px; color: var(--text-light); margin-top: 8px; }
+
+  /* ── activities ── */
+  .activities { background: #fff; }
+  .activities-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+    margin-top: 56px;
+  }
+  .activity-card {
+    border-radius: 20px; overflow: hidden;
+    background: var(--card-bg); box-shadow: 0 2px 20px rgba(0,0,0,.04);
+    transition: transform .25s, box-shadow .25s;
+  }
+  .activity-card:hover { transform: translateY(-6px); box-shadow: 0 12px 40px rgba(0,0,0,.08); }
+  .activity-img {
+    height: 200px; position: relative; overflow: hidden;
+  }
+  .activity-img-inner {
+    width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 56px;
+  }
+  .activity-img-inner.hiking { background: linear-gradient(135deg, #43e97b, #38f9d7); }
+  .activity-img-inner.camping { background: linear-gradient(135deg, #f6d365, #fda085); }
+  .activity-img-inner.climbing { background: linear-gradient(135deg, #a18cd1, #fbc2eb); }
+  .activity-img-inner.cycling { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+  .activity-img-inner.running { background: linear-gradient(135deg, #fa709a, #fee140); }
+  .activity-img-inner.snow { background: linear-gradient(135deg, #e0c3fc, #8ec5fc); }
+  .activity-body { padding: 24px; }
+  .activity-body h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+  .activity-body p { font-size: 14px; color: var(--text-light); line-height: 1.6; }
+
+  /* ── gallery ── */
+  .gallery-scroll {
+    display: flex; gap: 16px; overflow-x: auto;
+    padding: 20px 0; margin-top: 48px;
+    scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
+  }
+  .gallery-scroll::-webkit-scrollbar { height: 4px; }
+  .gallery-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  .gallery-item {
+    flex: 0 0 280px; height: 360px; border-radius: 16px;
+    scroll-snap-align: start;
+    display: flex; align-items: flex-end; padding: 24px;
+    color: #fff; font-weight: 600; font-size: 16px;
+    transition: transform .3s;
+  }
+  .gallery-item:hover { transform: scale(1.03); }
+  .gallery-item:nth-child(1) { background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,.6)), linear-gradient(135deg, #2b5876, #4e4376); }
+  .gallery-item:nth-child(2) { background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,.6)), linear-gradient(135deg, #11998e, #38ef7d); }
+  .gallery-item:nth-child(3) { background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,.6)), linear-gradient(135deg, #fc5c7d, #6a82fb); }
+  .gallery-item:nth-child(4) { background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,.6)), linear-gradient(135deg, #ee0979, #ff6a00); }
+  .gallery-item:nth-child(5) { background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,.6)), linear-gradient(135deg, #4568dc, #b06ab3); }
+
+  /* ── join / qr ── */
+  .join { background: var(--primary); color: #fff; }
+  .join-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 80px;
+    align-items: center;
+  }
+  .join .section-desc { color: rgba(255,255,255,.6); }
+  .qr-box {
+    display: flex; flex-direction: column; align-items: center; gap: 20px;
+  }
+  .qr-code {
+    width: 200px; height: 200px; background: #fff; border-radius: 20px;
+    padding: 12px;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 12px 40px rgba(0,0,0,.3);
+  }
+  .qr-code svg { width: 100%; height: 100%; }
+  .qr-label { font-size: 15px; font-weight: 500; color: rgba(255,255,255,.8); letter-spacing: 2px; }
+
+  /* ── contact ── */
+  .contact-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px;
+    margin-top: 48px;
+  }
+  .contact-card {
+    background: var(--card-bg); border-radius: 16px; padding: 28px;
+    display: flex; align-items: center; gap: 20px;
+    box-shadow: 0 2px 20px rgba(0,0,0,.04);
+    transition: transform .2s;
+  }
+  .contact-card:hover { transform: translateY(-3px); }
+  .contact-icon {
+    width: 52px; height: 52px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; flex-shrink: 0;
+  }
+  .contact-icon.wechat { background: #e8fce8; }
+  .contact-icon.phone { background: #fff0e8; }
+  .contact-icon.email { background: #e8f0ff; }
+  .contact-icon.address { background: #fde8ff; }
+  .contact-info h4 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .contact-info p { font-size: 14px; color: var(--text-light); }
+
+  /* ── footer ── */
+  footer {
+    text-align: center; padding: 40px;
+    font-size: 13px; color: var(--text-light);
+    border-top: 1px solid var(--border);
+  }
+
+  /* ── responsive ── */
+  @media (max-width: 768px) {
+    .nav { padding: 0 20px; }
+    .nav-links { display: none; }
+    section { padding: 64px 20px; }
+    .about-grid, .join-grid { grid-template-columns: 1fr; gap: 40px; }
+    .activities-grid { grid-template-columns: 1fr; }
+    .contact-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- nav -->
+<nav class="nav">
+  <div class="nav-logo">云途<span>世界</span></div>
+  <ul class="nav-links">
+    <li><a href="#about">关于我们</a></li>
+    <li><a href="#activities">户外活动</a></li>
+    <li><a href="#join">加入我们</a></li>
+    <li><a href="#contact">联系方式</a></li>
+  </ul>
+</nav>
+
+<!-- hero -->
+<section class="hero">
+  <div class="hero-content">
+    <p class="hero-tag">OUTDOOR · EXPLORE · TOGETHER</p>
+    <h1>云途<span>世界</span></h1>
+    <p class="hero-subtitle">走出城市，拥抱山野。和一群有趣的人，探索世界的每一个角落。</p>
+    <a href="#join" class="hero-cta">加入我们</a>
+  </div>
+  <div class="hero-scroll">向下探索</div>
+</section>
+
+<!-- about -->
+<section id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div>
+        <p class="section-tag">About</p>
+        <h2 class="section-title">关于云途世界</h2>
+        <p class="section-desc">
+          我们是一群热爱户外运动的年轻人，成立于2020年。
+          每个周末，我们都会组织登山、徒步、露营、骑行等活动，
+          在自然中挑战自我，在旅途中结识朋友。
+          无论你是资深户外玩家还是新手小白，这里都有属于你的位置。
+        </p>
+      </div>
+      <div class="stats">
+        <div class="stat-card">
+          <div class="stat-num">200+</div>
+          <div class="stat-label">累计活动场次</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">3,500+</div>
+          <div class="stat-label">俱乐部成员</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">50+</div>
+          <div class="stat-label">探索路线</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">5</div>
+          <div class="stat-label">年户外经验</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- activities -->
+<section class="activities" id="activities">
+  <div class="container">
+    <p class="section-tag">Activities</p>
+    <h2 class="section-title">户外活动项目</h2>
+    <p class="section-desc">从周末轻徒步到长线穿越，总有一款适合你的节奏。</p>
+    <div class="activities-grid">
+      <div class="activity-card">
+        <div class="activity-img"><div class="activity-img-inner hiking">⛰️</div></div>
+        <div class="activity-body">
+          <h3>徒步登山</h3>
+          <p>每月多条单日/多日线路，涵盖初级到高级难度，专业领队全程带队。</p>
+        </div>
+      </div>
+      <div class="activity-card">
+        <div class="activity-img"><div class="activity-img-inner camping">🏕️</div></div>
+        <div class="activity-body">
+          <h3>露营野炊</h3>
+          <p>星空帐篷、篝火晚会、野外烧烤，感受最纯粹的自然生活方式。</p>
+        </div>
+      </div>
+      <div class="activity-card">
+        <div class="activity-img"><div class="activity-img-inner climbing">🧗</div></div>
+        <div class="activity-body">
+          <h3>攀岩速降</h3>
+          <p>室内抱石训练 + 野外岩壁实战，零基础也能体验攀岩的乐趣。</p>
+        </div>
+      </div>
+      <div class="activity-card">
+        <div class="activity-img"><div class="activity-img-inner cycling">🚴</div></div>
+        <div class="activity-body">
+          <h3>骑行穿越</h3>
+          <p>城市绿道到山野林道，公路车与山地车双线并行，用轮迹丈量大地。</p>
+        </div>
+      </div>
+      <div class="activity-card">
+        <div class="activity-img"><div class="activity-img-inner running">🏃</div></div>
+        <div class="activity-body">
+          <h3>越野跑</h3>
+          <p>山径、沙滩、森林——在各种地形上奔跑，释放你的速度与激情。</p>
+        </div>
+      </div>
+      <div class="activity-card">
+        <div class="activity-img"><div class="activity-img-inner snow">🏂</div></div>
+        <div class="activity-body">
+          <h3>滑雪冲浪</h3>
+          <p>冬季滑雪、夏季冲浪，四季都有极限运动等你来挑战。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- gallery -->
+<section>
+  <div class="container">
+    <p class="section-tag">Moments</p>
+    <h2 class="section-title">精彩瞬间</h2>
+    <p class="section-desc">每一次出发，都是一段难忘的故事。</p>
+    <div class="gallery-scroll">
+      <div class="gallery-item">🏔️ 四姑娘山大峰</div>
+      <div class="gallery-item">🌲 莫干山竹林穿越</div>
+      <div class="gallery-item">🌅 东极岛日出露营</div>
+      <div class="gallery-item">🏕️ 千岛湖环湖骑行</div>
+      <div class="gallery-item">❄️ 长白山滑雪之旅</div>
+    </div>
+  </div>
+</section>
+
+<!-- join -->
+<section class="join" id="join">
+  <div class="container">
+    <div class="join-grid">
+      <div>
+        <p class="section-tag">Join Us</p>
+        <h2 class="section-title">加入云途世界</h2>
+        <p class="section-desc">
+          扫码添加俱乐部微信，加入我们的户外社群。
+          每周活动预告、装备推荐、户外知识分享，
+          和3500+位户外爱好者一起出发。
+        </p>
+      </div>
+      <div class="qr-box">
+        <div class="qr-code">
+          <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <!-- QR code pattern (placeholder – replace with actual QR) -->
+            <rect width="200" height="200" fill="#fff"/>
+            <!-- Position markers -->
+            <rect x="10" y="10" width="60" height="60" rx="4" fill="none" stroke="#2b2b2b" stroke-width="8"/>
+            <rect x="22" y="22" width="36" height="36" rx="2" fill="#2b2b2b"/>
+            <rect x="28" y="28" width="24" height="24" fill="#fff"/>
+
+            <rect x="130" y="10" width="60" height="60" rx="4" fill="none" stroke="#2b2b2b" stroke-width="8"/>
+            <rect x="142" y="22" width="36" height="36" rx="2" fill="#2b2b2b"/>
+            <rect x="148" y="28" width="24" height="24" fill="#fff"/>
+
+            <rect x="10" y="130" width="60" height="60" rx="4" fill="none" stroke="#2b2b2b" stroke-width="8"/>
+            <rect x="22" y="142" width="36" height="36" rx="2" fill="#2b2b2b"/>
+            <rect x="28" y="148" width="24" height="24" fill="#fff"/>
+
+            <!-- Data modules (simplified) -->
+            <rect x="72" y="8" width="8" height="8" fill="#2b2b2b"/><rect x="88" y="8" width="8" height="8" fill="#2b2b2b"/>
+            <rect x="72" y="24" width="8" height="8" fill="#2b2b2b"/><rect x="96" y="24" width="8" height="8" fill="#2b2b2b"/>
+            <rect x="80" y="40" width="8" height="8" fill="#2b2b2b"/><rect x="104" y="16" width="8" height="8" fill="#2b2b2b"/>
+            <rect x="112" y="32" width="8" height="8" fill="#2b2b2b"/><rect x="120" y="8" width="8" height="8" fill="#2b2b2b"/>
+
+            <rect x="8" y="72" width="8" height="8" fill="#2b2b2b"/><rect x="24" y="80" width="8" height="8" fill="#2b2b2b"/>
+            <rect x="40" y="72" width="8" height="8" fill="#2b2b2b"/><rect x="8" y="88" width="8" height="8" fill="#2b2b2b"/>
+            <rect x="56" y="80" width="8" height="8" fill="#2b2b2b"/><rect x="16" y="96" width="8" height="8" fill="#2b2b2b"/>
+            <rect x="32" y="104" width="8" height="8" fill="#2b2b2b"/><rect x="48" y="88" width="8" height="8" fill="#2b2b2b"/>
+
+            <rect x="72" y="72" width="8" height="8" fill="#2b2b2b"/><rect x="88" y="72" width="8" height="8" fill="#2b2b2b"/>
+            <rect x="104" y="72" width="8" height="8" fill="#2b2b2b"/><rect x="120" y="72" width="8" height="8" fill="#2b2b2b"/>
+            <rect x="72" y="88" width="8" height="8" fill="#2b2b2b"/><rect x="120" y="88" width="8" height="8" fill="#2b2b2b"/>
+            <rect x="80" y="104" width="8" height="8" fill="#2b2b2b"/><rect x="96" y="104" width="8" height="8" fill="#2b2b2b"/>
+            <rect x="112" y="104" width="8" height="8" fill="#2b2b2b"/><rect x="80" y="120" width="8" height="8" fill="#2b2b2b"/>
+            <rect x="104" y="120" width="8" height="8" fill="#2b2b2b"/>
+
+            <rect x="8" y="128" width="8" height="8" fill="#2b2b2b"/><rect x="24" y="136" width="8" height="8" fill="#2b2b2b"/>
+            <rect x="40" y="128" width="8" height="8" fill="#2b2b2b"/><rect x="56" y="144" width="8" height="8" fill="#2b2b2b"/>
+            <rect x="16" y="152" width="8" height="8" fill="#2b2b2b"/><rect x="32" y="168" width="8" height="8" fill="#2b2b2b"/>
+            <rect x="48" y="160" width="8" height="8" fill="#2b2b2b"/>
+
+            <rect x="128" y="72" width="8" height="8" fill="#2b2b2b"/><rect x="144" y="80" width="8" height="8" fill="#2b2b2b"/>
+            <rect x="160" y="72" width="8" height="8" fill="#2b2b2b"/><rect x="136" y="88" width="8" height="8" fill="#2b2b2b"/>
+            <rect x="152" y="96" width="8" height="8" fill="#2b2b2b"/><rect x="168" y="104" width="8" height="8" fill="#2b2b2b"/>
+            <rect x="176" y="88" width="8" height="8" fill="#2b2b2b"/><rect x="184" y="72" width="8" height="8" fill="#2b2b2b"/>
+
+            <rect x="128" y="128" width="8" height="8" fill="#2b2b2b"/><rect x="144" y="136" width="8" height="8" fill="#2b2b2b"/>
+            <rect x="160" y="128" width="8" height="8" fill="#2b2b2b"/><rect x="176" y="144" width="8" height="8" fill="#2b2b2b"/>
+            <rect x="136" y="152" width="8" height="8" fill="#2b2b2b"/><rect x="152" y="168" width="8" height="8" fill="#2b2b2b"/>
+            <rect x="168" y="160" width="8" height="8" fill="#2b2b2b"/><rect x="184" y="176" width="8" height="8" fill="#2b2b2b"/>
+          </svg>
+        </div>
+        <p class="qr-label">微信扫码加入社群</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- contact -->
+<section id="contact">
+  <div class="container">
+    <p class="section-tag">Contact</p>
+    <h2 class="section-title">联系方式</h2>
+    <p class="section-desc">有任何问题？欢迎通过以下方式联系我们。</p>
+    <div class="contact-grid">
+      <div class="contact-card">
+        <div class="contact-icon wechat">💬</div>
+        <div class="contact-info">
+          <h4>微信公众号</h4>
+          <p>云途世界户外</p>
+        </div>
+      </div>
+      <div class="contact-card">
+        <div class="contact-icon phone">📱</div>
+        <div class="contact-info">
+          <h4>联系电话</h4>
+          <p>138-0000-0000</p>
+        </div>
+      </div>
+      <div class="contact-card">
+        <div class="contact-icon email">📧</div>
+        <div class="contact-info">
+          <h4>电子邮箱</h4>
+          <p>hello@yuntu.world</p>
+        </div>
+      </div>
+      <div class="contact-card">
+        <div class="contact-icon address">📍</div>
+        <div class="contact-info">
+          <h4>活动集合点</h4>
+          <p>杭州市西湖区曙光路 云途户外基地</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>© 2025 云途世界户外俱乐部 · 让每一次出发都有意义</p>
+</footer>
+
+</body>
+</html>
