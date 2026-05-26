@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>川西加米峰 · 日照金山 | 云途世界</title>
-<meta property="og:title" content="川西加米峰 · 日照金山 | 云途世界">
+<title>川西加米峰 · 日照金山 | 云途视界</title>
+<meta property="og:title" content="川西加米峰 · 日照金山 | 云途视界">
 <meta property="og:description" content="在巴塔哥尼亚同款神山，等一场日出。2天1夜，川西秘境，新人可走。">
 <meta property="og:image" content="">
 <meta property="og:type" content="article">
@@ -474,8 +474,7 @@
   </div>
 
   <div class="hero-logo">
-    <div class="hero-logo-dot"></div>
-    <div class="hero-logo-text">云途<span>世界</span></div>
+    <img src="assets/images/jiamifeng/logo.png" alt="云途视界" style="height:32px;filter:brightness(0) invert(1);">
   </div>
 
   <div class="hero-info">
@@ -517,7 +516,7 @@
     </div>
     <div class="stat-card">
       <div class="stat-num">4<span class="stat-unit">h</span></div>
-      <div class="stat-label">成都出发车程</div>
+      <div class="stat-label">重庆出发车程</div>
     </div>
     <div class="stat-card">
       <div class="stat-num">6-10<span class="stat-unit">月</span></div>
@@ -578,7 +577,7 @@
     <div class="tl-item"><div class="tl-dot"></div><div class="tl-time">06:30</div><div class="tl-title">日照金山 + 云海日出</div><div class="tl-desc">这一刻值得所有早起的困倦</div></div>
     <div class="tl-item"><div class="tl-dot"></div><div class="tl-time">08:00</div><div class="tl-title">返回营地早餐</div><div class="tl-desc">收拾行装，最后再看一眼神山</div></div>
     <div class="tl-item"><div class="tl-dot"></div><div class="tl-time">10:00</div><div class="tl-title">乘中转车下山</div><div class="tl-desc">换乘大巴返程</div></div>
-    <div class="tl-item"><div class="tl-dot"></div><div class="tl-time">约 21:00</div><div class="tl-title">回到成都</div><div class="tl-desc">满载照片和回忆</div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-time">约 21:00</div><div class="tl-title">回到重庆</div><div class="tl-desc">满载照片和回忆</div></div>
   </div>
 </div>
 
@@ -633,7 +632,7 @@
     </div>
   </div>
 
-  <div class="qr-box">扫码报名</div>
+  <div class="qr-box" style="border:none;overflow:hidden;"><img src="assets/images/jiamifeng/微信图片_20260526220821_24_166.jpg" style="width:100px;height:100px;object-fit:contain;"></div>
 
   <a href="#" class="cta-btn" style="display:inline-flex;">微信咨询 / 报名 →</a>
   <p style="margin-top:14px; font-size:12px; color:rgba(255,255,255,0.35);">
@@ -642,7 +641,7 @@
 </div>
 
 <div class="footer-bar">
-  © 云途世界户外俱乐部 · 让每一次出发都有意义
+  © 云途视界户外俱乐部 · 让每一次出发都有意义
 </div>
 
 <!-- ═══════════ Lightbox ═══════════ -->
@@ -934,7 +933,7 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = '加米峰海报_云途世界.png';
+      a.download = '加米峰海报_云途视界.png';
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -1063,8 +1062,8 @@
       heroInner.appendChild(img);
     }
     heroInner.appendChild(mkDiv('position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.25) 50%, rgba(0,0,0,0.78) 78%, rgba(0,0,0,0.9) 100%);'));
-    heroInner.appendChild(mkDiv('position:absolute;top:18px;left:24px;display:flex;align-items:center;gap:8px;z-index:5;',
-      '<div style="width:10px;height:10px;border-radius:3px;background:#FF6B35;"></div><div style="font-size:16px;font-weight:700;letter-spacing:2px;">云途<span style="color:#FF6B35;">世界</span></div>'));
+    heroInner.appendChild(mkDiv('position:absolute;top:18px;left:24px;z-index:5;',
+      '<img src="assets/images/jiamifeng/logo.png" alt="云途视界" style="height:28px;filter:brightness(0) invert(1);">'));
     const infoBox = mkDiv('position:absolute;bottom:0;left:0;right:0;z-index:5;padding:0 28px 36px;');
     infoBox.innerHTML = `
       <div style="display:inline-block;font-size:11px;letter-spacing:3px;color:#FF6B35;border:1px solid rgba(255,107,53,0.4);border-radius:4px;padding:4px 10px;margin-bottom:14px;font-weight:500;">川西秘境 · 2天1夜</div>
@@ -1085,7 +1084,7 @@
       'DESTINATION', '大将军黑色神山',
       '加米峰，藏语称<b>「玛波东伽热拉」</b>——大将军黑色神山。苯教四大神山之一，主峰<b>5387米</b>，金字塔形山体如刀削斧劈，被称为<b>「川西多洛米蒂」「中国巴塔哥尼亚」</b>。尚未商业化的小众秘境，趁人潮未至，去看她最美的样子。',
       imageData[4],
-      [{ num:'5387', unit:'m', label:'主峰海拔' },{ num:'2', unit:'条线', label:'卫峰观景 + 山脊日出' },{ num:'4', unit:'h', label:'成都出发车程' },{ num:'6-10', unit:'月', label:'最佳徒步季节' }]
+      [{ num:'5387', unit:'m', label:'主峰海拔' },{ num:'2', unit:'条线', label:'卫峰观景 + 山脊日出' },{ num:'4', unit:'h', label:'重庆出发车程' },{ num:'6-10', unit:'月', label:'最佳徒步季节' }]
     ));
 
     // 三大体验
@@ -1106,7 +1105,7 @@
     const schSec = mkDiv(`width:${W}px;background:#1a1a2e;color:#fff;font-family:'Noto Sans SC',sans-serif;padding:44px 24px;`);
     schSec.innerHTML = `<div style="font-size:10px;letter-spacing:3px;color:#FF6B35;margin-bottom:10px;font-weight:600;">ITINERARY</div><h2 style="font-family:'Ma Shan Zheng',cursive;font-size:26px;font-weight:400;margin:0 0 6px;letter-spacing:2px;">两天一夜行程</h2>`;
     schSec.appendChild(dayTimeline('DAY 1 · 5月23日 周六', [['07:00','嘉州路集合出发','包车前往康定姑咱镇'],['11:30','姑咱镇午餐','牦牛肉汤锅，海拔1400m适应休整'],['13:00','换乘越野车上山','碎石机耕道1.5h，沿途雪山渐显'],['14:30','抵达小木屋营地（3750m）','分配床位，休整适应海拔'],['15:30','轻装出发 · 卫峰线','徒步3.5km登4450m观景台，守候日落金山'],['21:00','星空夜话','营地晚餐，抬头即是银河']]));
-    schSec.appendChild(dayTimeline('DAY 2 · 5月24日 周日', [['04:00','摸黑出发 · 山脊日出线','头灯必备，徒步登4400m山脊观景台'],['06:30','日照金山 + 云海日出','这一刻值得所有早起的困倦'],['08:00','返回营地早餐','收拾行装，最后再看一眼神山'],['10:00','乘中转车下山','换乘大巴返程'],['约 21:00','回到成都','满载照片和回忆']]));
+    schSec.appendChild(dayTimeline('DAY 2 · 5月24日 周日', [['04:00','摸黑出发 · 山脊日出线','头灯必备，徒步登4400m山脊观景台'],['06:30','日照金山 + 云海日出','这一刻值得所有早起的困倦'],['08:00','返回营地早餐','收拾行装，最后再看一眼神山'],['10:00','乘中转车下山','换乘大巴返程'],['约 21:00','回到重庆','满载照片和回忆']]));
     sections.push(schSec);
 
     // 实拍画廊
@@ -1132,7 +1131,7 @@
         <span><span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:#FF6B35;margin-right:5px;vertical-align:middle;"></span>5.23 — 5.24</span>
         <span><span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:#FF6B35;margin-right:5px;vertical-align:middle;"></span>嘉州路集合</span>
       </div>
-      <div style="width:100px;height:100px;border:1.5px dashed rgba(255,255,255,0.18);border-radius:14px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.28);font-size:12px;">扫码报名</div>
+      <div style="width:100px;height:100px;border-radius:14px;margin:0 auto 16px;overflow:hidden;"><img src="assets/images/jiamifeng/微信图片_20260526220821_24_166.jpg" style="width:100px;height:100px;object-fit:contain;"></div>
       <div style="display:inline-block;padding:14px 40px;background:linear-gradient(135deg,#FF6B35,#e55a2b);color:#fff;border-radius:30px;font-size:16px;font-weight:600;letter-spacing:1px;">微信咨询 / 报名 →</div>
       <p style="margin-top:14px;font-size:12px;color:rgba(255,255,255,0.35);">行摄无疆 视界由我</p>`;
     sections.push(ctaSec);
@@ -1166,10 +1165,8 @@
       background:linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.25) 50%, rgba(0,0,0,0.78) 78%, rgba(0,0,0,0.9) 100%);
     `));
     // Logo
-    hero.appendChild(mkDiv('position:absolute;top:18px;left:24px;display:flex;align-items:center;gap:8px;z-index:5;', `
-      <div style="width:10px;height:10px;border-radius:3px;background:#FF6B35;"></div>
-      <div style="font-size:16px;font-weight:700;letter-spacing:2px;">云途<span style="color:#FF6B35;">世界</span></div>
-    `));
+    hero.appendChild(mkDiv('position:absolute;top:18px;left:24px;z-index:5;',
+      '<img src="assets/images/jiamifeng/logo.png" alt="云途视界" style="height:28px;filter:brightness(0) invert(1);">'));
     // 底部信息
     const infoBox = mkDiv(`
       position:absolute;bottom:0;left:0;right:0;z-index:5;padding:0 28px 36px;
@@ -1196,7 +1193,7 @@
       [
         { num:'5387', unit:'m', label:'主峰海拔' },
         { num:'2', unit:'条线', label:'卫峰观景 + 山脊日出' },
-        { num:'4', unit:'h', label:'成都出发车程' },
+        { num:'4', unit:'h', label:'重庆出发车程' },
         { num:'6-10', unit:'月', label:'最佳徒步季节' }
       ]
     ));
@@ -1255,7 +1252,7 @@
       ['06:30','日照金山 + 云海日出','这一刻值得所有早起的困倦'],
       ['08:00','返回营地早餐','收拾行装，最后再看一眼神山'],
       ['10:00','乘中转车下山','换乘大巴返程'],
-      ['约 21:00','回到成都','满载照片和回忆'],
+      ['约 21:00','回到重庆','满载照片和回忆'],
     ]));
     container.appendChild(schSection);
 
@@ -1288,7 +1285,7 @@
         <span><span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:#FF6B35;margin-right:5px;vertical-align:middle;"></span>5.23 — 5.24</span>
         <span><span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:#FF6B35;margin-right:5px;vertical-align:middle;"></span>嘉州路集合</span>
       </div>
-      <div style="width:100px;height:100px;border:1.5px dashed rgba(255,255,255,0.18);border-radius:14px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.28);font-size:12px;">扫码报名</div>
+      <div style="width:100px;height:100px;border-radius:14px;margin:0 auto 16px;overflow:hidden;"><img src="assets/images/jiamifeng/微信图片_20260526220821_24_166.jpg" style="width:100px;height:100px;object-fit:contain;"></div>
       <div style="display:inline-block;padding:14px 40px;background:linear-gradient(135deg,#FF6B35,#e55a2b);color:#fff;border-radius:30px;font-size:16px;font-weight:600;letter-spacing:1px;">微信咨询 / 报名 →</div>
       <p style="margin-top:14px;font-size:12px;color:rgba(255,255,255,0.35);">行摄无疆 视界由我</p>
     `;
@@ -1296,7 +1293,7 @@
 
     // Footer
     container.appendChild(mkDiv('text-align:center;padding:20px;font-size:11px;color:rgba(255,255,255,0.25);border-top:1px solid rgba(255,255,255,0.05);',
-      '© 云途世界户外俱乐部 · 让每一次出发都有意义'
+      '© 云途视界户外俱乐部 · 让每一次出发都有意义'
     ));
 
     return container;
