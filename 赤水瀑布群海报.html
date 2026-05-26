@@ -649,7 +649,17 @@
 <script>
   // ── 图片管理（IndexedDB持久化 + data URL） ──
   const TOTAL = 7;
-  const imageData = new Array(TOTAL).fill(null); // 存储 data URL (base64)
+  // 默认使用压缩后的赤水照片，用户上传后替换为 data URL
+  const DEFAULT_IMAGES = [
+    'assets/images/jiamifeng/IMG_4922_comp.jpg', // 竖图 → 封面主图
+    'assets/images/jiamifeng/IMG_5028_comp.jpg', // 竖图 → 轮播②
+    'assets/images/jiamifeng/IMG_5056_comp.jpg', // 竖图 → 轮播③
+    'assets/images/jiamifeng/IMG_5065_comp.jpg', // 竖图 → 轮播④
+    'assets/images/jiamifeng/IMG_4972_comp.jpg', // 横图 → 目的地大图
+    'assets/images/jiamifeng/IMG_4992_comp.jpg', // 横图 → 体验卡①
+    'assets/images/jiamifeng/IMG_5047_comp.jpg', // 横图 → 体验卡②
+  ];
+  const imageData = DEFAULT_IMAGES.map(p => p); // 默认用文件路径，DB恢复后覆盖为 data URL
   let currentPickSlot = -1;
   const DB_NAME = 'yuntu_poster_chishui';
   const DB_STORE = 'images';
@@ -695,9 +705,12 @@
         imageData[i] = saved[i];
         applyImageToDOM(i, saved[i]);
         restored++;
+      } else if (DEFAULT_IMAGES[i]) {
+        // 无DB缓存时使用默认压缩图
+        applyImageToDOM(i, DEFAULT_IMAGES[i]);
       }
     }
-    if (restored > 0) {
+    if (restored > 0 || DEFAULT_IMAGES.some(d => d)) {
       document.getElementById('doneBtn').style.display = 'flex';
       if (typeof heroSwiper !== 'undefined') heroSwiper.update();
     }
