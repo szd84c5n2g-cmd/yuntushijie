@@ -1,0 +1,1356 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>赤水瀑布群 · 溯溪 | 云途视界</title>
+<meta property="og:title" content="赤水瀑布群 · 溯溪 | 云途视界">
+<meta property="og:description" content="三道瀑布，六公里溪谷，初夏第一场溯溪。新手友好，摄影领队跟拍。">
+<meta property="og:image" content="">
+<meta property="og:type" content="article">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Liu+Jian+Mao+Cao&family=Ma+Shan+Zheng&family=ZCOOL+XiaoWei&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  :root {
+    --orange: #FF6B35;
+    --dark: #1a1a2e;
+    --darker: #0f1825;
+    --card: rgba(255,255,255,0.06);
+  }
+
+  body {
+    font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--dark);
+    color: #fff;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* ═══ 顶栏 ═══ */
+  .toolbar {
+    position: fixed; top: 0; left: 50%; transform: translateX(-50%);
+    width: 100%; max-width: 480px; z-index: 100;
+    padding: 12px 16px;
+    display: flex; gap: 10px; justify-content: flex-end;
+    pointer-events: none;
+  }
+  .toolbar button {
+    pointer-events: auto;
+    padding: 8px 16px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.3);
+    background: rgba(0,0,0,0.7); color: #fff; font-size: 13px;
+    cursor: pointer; backdrop-filter: blur(8px);
+    display: flex; align-items: center; gap: 6px;
+    transition: background 0.2s;
+  }
+  .toolbar button:hover { background: rgba(0,0,0,0.85); }
+  .toolbar button.primary { background: var(--orange); border-color: var(--orange); }
+  .toolbar button.primary:hover { background: #e55a2b; }
+
+  /* ═══ 底部生成长图按钮 ═══ */
+  .capture-bar {
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+    z-index: 100; pointer-events: none;
+  }
+  .capture-bar button {
+    pointer-events: auto;
+    padding: 14px 32px; border-radius: 30px; border: none;
+    background: linear-gradient(135deg, #FF6B35, #e55a2b);
+    color: #fff; font-size: 16px; font-weight: 600;
+    cursor: pointer; letter-spacing: 1px;
+    box-shadow: 0 8px 30px rgba(255,107,53,0.45);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .capture-bar button:active { transform: scale(0.95); }
+
+  /* ═══ 生成中的loading ═══ */
+  .capture-loading {
+    position: fixed; inset: 0; z-index: 9999;
+    background: rgba(0,0,0,0.85); display: none;
+    flex-direction: column; align-items: center; justify-content: center;
+    color: #fff;
+  }
+  .capture-loading.active { display: flex; }
+  .capture-loading .spinner {
+    width: 40px; height: 40px; border: 3px solid rgba(255,255,255,0.2);
+    border-top-color: var(--orange); border-radius: 50%;
+    animation: spin 0.8s linear infinite; margin-bottom: 16px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ═══ 生成结果预览 ═══ */
+  .capture-result {
+    position: fixed; inset: 0; z-index: 9999;
+    background: #000; display: none;
+    flex-direction: column; align-items: center;
+    overflow-y: auto;
+  }
+  .capture-result.active { display: flex; }
+  .capture-result-header {
+    position: sticky; top: 0; z-index: 10;
+    width: 100%; padding: 16px 20px;
+    background: rgba(0,0,0,0.9);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .capture-result-header span {
+    font-size: 14px; color: rgba(255,255,255,0.7);
+  }
+  .capture-result-header button {
+    padding: 8px 20px; border-radius: 20px; border: none;
+    background: var(--orange); color: #fff; font-size: 14px; font-weight: 600;
+    cursor: pointer;
+  }
+  .capture-result img {
+    width: 100%; max-width: 480px; display: block;
+  }
+  .capture-tip {
+    position: sticky; bottom: 0;
+    width: 100%; padding: 14px; text-align: center;
+    background: rgba(0,0,0,0.9); color: rgba(255,255,255,0.6);
+    font-size: 12px;
+  }
+
+  /* ═══ 多图导出卡片 ═══ */
+  .multi-card {
+    margin: 12px 16px; border-radius: 12px; overflow: hidden;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .multi-card img {
+    width: 100%; display: block;
+  }
+  .multi-card-footer {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 14px;
+  }
+  .multi-card-footer span {
+    font-size: 13px; color: rgba(255,255,255,0.6);
+  }
+  .multi-card-footer button {
+    padding: 6px 16px; border-radius: 16px; border: none;
+    background: #FF6B35; color: #fff; font-size: 13px; font-weight: 600;
+    cursor: pointer;
+  }
+
+  /* ═══ 图片占位 ═══ */
+  .img-slot {
+    position: relative; cursor: pointer;
+    background: rgba(255,255,255,0.04);
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden; transition: all 0.3s;
+  }
+  .img-slot.has-image { background: transparent; }
+  .img-slot .placeholder {
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    color: rgba(255,255,255,0.3); font-size: 13px;
+    transition: opacity 0.3s;
+  }
+  .img-slot .placeholder-icon { font-size: 32px; opacity: 0.5; }
+  .img-slot.has-image .placeholder { opacity: 0; }
+  .img-slot img {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: cover; display: none;
+  }
+  .img-slot.has-image img { display: block; }
+  .img-slot .change-hint {
+    position: absolute; bottom: 8px; right: 8px;
+    background: rgba(0,0,0,0.6); color: #fff;
+    font-size: 11px; padding: 3px 8px; border-radius: 10px;
+    opacity: 0; transition: opacity 0.2s; z-index: 3;
+    pointer-events: none;
+  }
+  .img-slot.has-image:hover .change-hint { opacity: 1; }
+  .img-slot .slot-label {
+    position: absolute; top: 8px; left: 8px;
+    background: rgba(0,0,0,0.55); color: rgba(255,255,255,0.7);
+    font-size: 11px; padding: 2px 8px; border-radius: 8px; z-index: 3;
+    pointer-events: none;
+  }
+  .img-slot.has-image .slot-label { opacity: 0.7; }
+
+  /* ═══════════ P1: 封面 ═══════════ */
+  .hero {
+    width: 100%; max-width: 480px; margin: 0 auto;
+    height: 100vh; position: relative; overflow: hidden;
+  }
+  .swiper-hero { width: 100%; height: 100%; }
+  .swiper-hero .swiper-slide {
+    position: relative; overflow: hidden;
+  }
+  .swiper-hero .slide-img {
+    position: absolute; inset: 0; object-fit: cover; width: 100%; height: 100%;
+  }
+  .slide-overlay {
+    position: absolute; inset: 0; z-index: 2;
+    background: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.25) 50%, rgba(0,0,0,0.75) 78%, rgba(0,0,0,0.9) 100%);
+  }
+  .swiper-hero .swiper-pagination {
+    bottom: 200px !important; z-index: 5;
+  }
+  .swiper-hero .swiper-pagination-bullet {
+    width: 6px; height: 6px; background: rgba(255,255,255,0.5); opacity: 1;
+  }
+  .swiper-hero .swiper-pagination-bullet-active {
+    background: var(--orange); width: 20px; border-radius: 3px;
+  }
+
+  .hero-logo {
+    position: absolute; top: 18px; left: 24px; z-index: 20;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .hero-logo-dot { width: 10px; height: 10px; border-radius: 3px; background: var(--orange); }
+  .hero-logo-text { font-size: 16px; font-weight: 700; letter-spacing: 2px; }
+  .hero-logo-text span { color: var(--orange); }
+
+  .hero-info {
+    position: absolute; bottom: 0; left: 0; right: 0; z-index: 10;
+    padding: 0 28px 36px;
+  }
+  .hero-tag {
+    display: inline-block; font-size: 11px; letter-spacing: 3px;
+    color: var(--orange); border: 1px solid rgba(255,107,53,0.4);
+    border-radius: 4px; padding: 4px 10px; margin-bottom: 14px; font-weight: 500;
+  }
+  .hero-info h1 {
+    font-family: 'Liu Jian Mao Cao', 'Ma Shan Zheng', '华文行楷', 'STXingkai', 'KaiTi', cursive;
+    font-size: 48px; font-weight: 400; letter-spacing: 4px;
+    line-height: 1.25; margin-bottom: 6px;
+  }
+  .hero-info h1 .accent { color: var(--orange); }
+  .hero-subtitle {
+    font-family: 'Ma Shan Zheng', 'ZCOOL XiaoWei', 'STXingkai', 'KaiTi', cursive;
+    font-size: 18px; font-weight: 400; color: rgba(255,255,255,0.85);
+    margin-bottom: 4px; line-height: 1.6; letter-spacing: 1px;
+  }
+  .info-row {
+    display: flex; gap: 16px; margin: 14px 0 18px;
+    font-size: 13px; color: rgba(255,255,255,0.85); flex-wrap: wrap;
+  }
+  .info-item { display: flex; align-items: center; gap: 5px; }
+  .info-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--orange); }
+
+  .cta-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 14px 40px;
+    background: linear-gradient(135deg, #FF6B35, #e55a2b);
+    color: #fff; border-radius: 30px;
+    font-size: 16px; font-weight: 600; letter-spacing: 1px;
+    text-decoration: none; border: none; cursor: pointer;
+    box-shadow: 0 6px 24px rgba(255,107,53,0.35);
+    transition: transform 0.2s;
+  }
+  .cta-btn:active { transform: scale(0.96); }
+
+  .hero-slogan {
+    font-size: 11px; color: rgba(255,255,255,0.4);
+    margin-top: 10px; letter-spacing: 1px;
+  }
+
+  /* ═══════════ 通用section ═══════════ */
+  .section {
+    width: 100%; max-width: 480px; margin: 0 auto;
+    padding: 44px 24px; background: var(--dark);
+  }
+  .section-alt { background: var(--darker); }
+
+  .sec-badge {
+    display: inline-block; font-size: 10px; letter-spacing: 3px;
+    color: var(--orange); margin-bottom: 10px; font-weight: 600;
+  }
+  .sec-title { font-family: 'Ma Shan Zheng', 'ZCOOL XiaoWei', 'STXingkai', 'KaiTi', cursive; font-size: 26px; font-weight: 400; margin-bottom: 6px; letter-spacing: 2px; }
+  .sec-desc { font-size: 14px; color: rgba(255,255,255,0.6); line-height: 1.8; margin-bottom: 20px; }
+
+  /* ═══════════ P2: 神山介绍 ═══════════ */
+  .intro-img { width: 100%; height: 240px; border-radius: 16px; margin-bottom: 20px; }
+  .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .stat-card {
+    background: var(--card); border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 12px; padding: 18px 14px;
+  }
+  .stat-num { font-size: 26px; font-weight: 900; color: var(--orange); line-height: 1; margin-bottom: 4px; }
+  .stat-unit { font-size: 13px; font-weight: 400; }
+  .stat-label { font-size: 12px; color: rgba(255,255,255,0.5); }
+
+  /* ═══════════ P3: 三大体验 ═══════════ */
+  .exp-cards { display: flex; flex-direction: column; gap: 12px; }
+  .exp-card {
+    position: relative; border-radius: 16px; overflow: hidden;
+    height: 200px; cursor: pointer; transition: transform 0.2s;
+  }
+  .exp-card:active { transform: scale(0.98); }
+  .exp-card img {
+    position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+  }
+  .exp-card-overlay {
+    position: absolute; inset: 0; z-index: 1;
+    background: linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.78) 100%);
+  }
+  .exp-card-body { position: relative; z-index: 2; padding: 18px; }
+  .exp-card-body h4 { font-size: 17px; font-weight: 700; margin-bottom: 4px; }
+  .exp-card-body p { font-size: 12px; color: rgba(255,255,255,0.7); line-height: 1.5; }
+  .exp-card-icon { font-size: 24px; margin-bottom: 4px; }
+
+  /* ═══════════ P4: 行程 ═══════════ */
+  .day-label {
+    display: inline-block; font-size: 10px; letter-spacing: 2px;
+    background: rgba(255,107,53,0.12); color: var(--orange);
+    padding: 4px 12px; border-radius: 20px; margin-bottom: 12px; margin-top: 4px;
+  }
+  .timeline { position: relative; padding-left: 26px; }
+  .timeline::before {
+    content: ''; position: absolute; left: 7px; top: 0; bottom: 0;
+    width: 1.5px; background: rgba(255,107,53,0.25); border-radius: 1px;
+  }
+  .tl-item { position: relative; margin-bottom: 18px; }
+  .tl-dot {
+    position: absolute; left: -19px; top: 3px;
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--orange); border: 2px solid rgba(255,107,53,0.35);
+  }
+  .tl-time { font-size: 12px; color: var(--orange); font-weight: 600; margin-bottom: 2px; }
+  .tl-title { font-size: 15px; font-weight: 600; margin-bottom: 2px; }
+  .tl-desc { font-size: 12px; color: rgba(255,255,255,0.55); line-height: 1.5; }
+
+  /* ═══════════ P5: 画廊 ═══════════ */
+  .gallery-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 16px;
+  }
+  .gallery-item { border-radius: 10px; overflow: hidden; cursor: pointer; }
+  .gallery-main { grid-row: span 2; }
+  .gallery-wide { grid-column: span 2; }
+
+  /* ═══════════ P6: 报名 ═══════════ */
+  .cta-section { text-align: center; }
+  .qr-box {
+    width: 100px; height: 100px; border: 1.5px dashed rgba(255,255,255,0.18);
+    border-radius: 14px; margin: 20px auto 16px;
+    display: flex; align-items: center; justify-content: center;
+    color: rgba(255,255,255,0.28); font-size: 12px;
+  }
+
+  /* ═══════════ Lightbox ═══════════ */
+  .lightbox {
+    position: fixed; inset: 0; z-index: 999;
+    background: rgba(0,0,0,0.95); display: none;
+    align-items: center; justify-content: center;
+  }
+  .lightbox.active { display: flex; }
+  .lightbox img { max-width: 92vw; max-height: 85vh; border-radius: 12px; object-fit: contain; }
+  .lightbox-close {
+    position: absolute; top: 20px; right: 20px;
+    width: 40px; height: 40px; border-radius: 50%;
+    background: rgba(255,255,255,0.1); border: none; color: #fff;
+    font-size: 22px; cursor: pointer; z-index: 1000;
+  }
+  .lightbox-prev, .lightbox-next {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    width: 44px; height: 44px; border-radius: 50%;
+    background: rgba(255,255,255,0.1); border: none; color: #fff;
+    font-size: 20px; cursor: pointer; z-index: 1000;
+  }
+  .lightbox-prev { left: 16px; }
+  .lightbox-next { right: 16px; }
+
+  /* ═══════════ Footer ═══════════ */
+  .footer-bar {
+    max-width: 480px; margin: 0 auto;
+    text-align: center; padding: 20px; font-size: 11px;
+    color: rgba(255,255,255,0.25); border-top: 1px solid rgba(255,255,255,0.05);
+  }
+
+  /* 移动端 */
+  @media (max-width: 400px) {
+    .hero-info h1 { font-size: 30px; }
+    .exp-card { height: 170px; }
+  }
+
+  /* 点击涟漪 */
+  .img-slot .ripple {
+    position: absolute; inset: 0; z-index: 5;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(0,0,0,0.4); opacity: 0; transition: opacity 0.15s;
+    pointer-events: none;
+  }
+  .img-slot .ripple.show { opacity: 1; }
+
+  /* 隐藏file input */
+  .hidden-input { display: none; }
+</style>
+</head>
+<body>
+
+<!-- ═══ 顶栏 ═══ -->
+<div class="toolbar" id="toolbar">
+  <button onclick="document.getElementById('batchInput').click()">
+    📁 一键导入
+  </button>
+  <button class="primary" id="doneBtn" style="display:none;" onclick="scrollToTop()">
+    查看效果 ✓
+  </button>
+</div>
+
+<!-- ═══ 底部生成长图按钮 ═══ -->
+<div class="capture-bar" id="captureBar">
+  <button onclick="capturePage()" style="margin-right:6px;">📸 长图</button>
+  <button onclick="captureSections()">🖼️ 多图</button>
+</div>
+
+<!-- ═══ 生成loading ═══ -->
+<div class="capture-loading" id="captureLoading">
+  <div class="spinner"></div>
+  <div id="captureLoadingText">正在生成海报图片...</div>
+</div>
+
+<!-- ═══ 长图结果 ═══ -->
+<div class="capture-result" id="captureResult">
+  <div class="capture-result-header">
+    <span>长图生成完成</span>
+    <div style="display:flex;gap:8px;">
+      <button onclick="saveImage()" style="background:#FF6B35;color:#fff;border:none;padding:8px 20px;border-radius:20px;font-size:14px;font-weight:600;cursor:pointer;">💾 保存图片</button>
+      <button onclick="closeCaptureResult()" style="background:rgba(255,255,255,0.15);color:#fff;border:none;padding:8px 16px;border-radius:20px;font-size:14px;cursor:pointer;">关闭</button>
+    </div>
+  </div>
+  <img src="" alt="赤水瀑布群海报" id="captureImg">
+  <div class="capture-tip">👆 点击「保存图片」下载，然后发到微信群。也可长按图片保存。</div>
+</div>
+
+<!-- ═══ 多图结果 ═══ -->
+<div class="capture-result" id="captureMultiResult">
+  <div class="capture-result-header">
+    <span>多图导出 · 全部发到群里可左右滑动浏览</span>
+    <button onclick="closeMultiResult()" style="background:rgba(255,255,255,0.15);color:#fff;border:none;padding:8px 16px;border-radius:20px;font-size:14px;cursor:pointer;">关闭</button>
+  </div>
+  <div id="multiImageList"></div>
+  <div class="capture-tip">👆 逐张点击「保存」，然后全部选中一起发到微信群 → 自动变成可滑动的图片轮播</div>
+</div>
+
+<!-- ═══ 隐藏的file inputs ═══ -->
+<input type="file" accept="image/*" multiple class="hidden-input" id="batchInput" onchange="batchImport(this)">
+<input type="file" accept="image/*" class="hidden-input" id="singleInput" onchange="singleImport(this)">
+
+<!-- ═══════════ P1: 封面轮播 ═══════════ -->
+<div class="hero" id="top">
+  <div class="swiper swiper-hero" id="heroSwiper">
+    <div class="swiper-wrapper">
+      <div class="swiper-slide">
+        <img class="slide-img" data-slot="0" src="" alt="" style="display:none;">
+        <div class="img-slot slide-img" data-slot="0" id="slot-0" onclick="pickImage(0)" style="position:absolute;inset:0;z-index:1;">
+          <div class="placeholder"><span class="placeholder-icon">🖼️</span>点击选图 · 封面轮播①</div>
+          <div class="change-hint">点击替换</div>
+        </div>
+        <div class="slide-overlay"></div>
+      </div>
+      <div class="swiper-slide">
+        <img class="slide-img" data-slot="1" src="" alt="" style="display:none;">
+        <div class="img-slot slide-img" data-slot="1" id="slot-1" onclick="pickImage(1)" style="position:absolute;inset:0;z-index:1;">
+          <div class="placeholder"><span class="placeholder-icon">🖼️</span>点击选图 · 封面轮播②</div>
+          <div class="change-hint">点击替换</div>
+        </div>
+        <div class="slide-overlay"></div>
+      </div>
+      <div class="swiper-slide">
+        <img class="slide-img" data-slot="2" src="" alt="" style="display:none;">
+        <div class="img-slot slide-img" data-slot="2" id="slot-2" onclick="pickImage(2)" style="position:absolute;inset:0;z-index:1;">
+          <div class="placeholder"><span class="placeholder-icon">🖼️</span>点击选图 · 封面轮播③</div>
+          <div class="change-hint">点击替换</div>
+        </div>
+        <div class="slide-overlay"></div>
+      </div>
+      <div class="swiper-slide">
+        <img class="slide-img" data-slot="3" src="" alt="" style="display:none;">
+        <div class="img-slot slide-img" data-slot="3" id="slot-3" onclick="pickImage(3)" style="position:absolute;inset:0;z-index:1;">
+          <div class="placeholder"><span class="placeholder-icon">🖼️</span>点击选图 · 封面轮播④</div>
+          <div class="change-hint">点击替换</div>
+        </div>
+        <div class="slide-overlay"></div>
+      </div>
+    </div>
+    <div class="swiper-pagination"></div>
+  </div>
+
+  <div class="hero-logo">
+    <img src="assets/images/jiamifeng/logo.png" alt="云途视界" style="height:32px;filter:brightness(0) invert(1);">
+  </div>
+
+  <div class="hero-info">
+    <div class="hero-tag">贵州赤水 · 1天溯溪</div>
+    <h1>赤水瀑布群<span class="accent">·</span><br>溯溪</h1>
+    <p class="hero-subtitle">三道瀑布，六公里溪谷，<br>初夏第一场溯溪</p>
+    <div class="info-row">
+      <div class="info-item"><div class="info-dot"></div>5月30日（周六）</div>
+      <div class="info-item"><div class="info-dot"></div>嘉州路集合</div>
+      <div class="info-item"><div class="info-dot"></div>6km折返 · 溯溪</div>
+    </div>
+    <a href="#signup" class="cta-btn">立即报名 →</a>
+    <p class="hero-slogan">行摄无疆 视界由我</p>
+  </div>
+</div>
+
+<!-- ═══════════ P2: 神山介绍 ═══════════ -->
+<div class="section" id="about">
+  <div class="sec-badge">DESTINATION</div>
+  <h2 class="sec-title">贵州赤水瀑布群</h2>
+  <p class="sec-desc">
+    赤水瀑布群，位于贵州赤水丹霞地貌区。三条瀑布沿六公里溪谷依次展开——浅滩戏水、中型飞瀑、终点巨瀑。全程溪流相伴、栈道穿行、水雾沁人。尚未商业化的小众玩水秘境，初夏第一场溯溪就从这里开始。
+  </p>
+
+  <div class="intro-img img-slot" id="slot-4" data-slot="4" onclick="pickImage(4)">
+    <div class="placeholder"><span class="placeholder-icon">🖼️</span>点击选图 · 横图大图</div>
+    <div class="slot-label" style="pointer-events:none;">横图⑤</div>
+    <div class="change-hint">点击替换</div>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat-card">
+      <div class="stat-num">6<span class="stat-unit">km</span></div>
+      <div class="stat-label">徒步距离</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">200<span class="stat-unit">m</span></div><div class="stat-label">累计爬升</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">4<span class="stat-unit">h</span></div><div class="stat-label">往返耗时</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">★★<span class="stat-unit"></span></div>
+      <div class="stat-label">难度 · 新手友好</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ P3: 三大体验 ═══════════ -->
+<div class="section section-alt" id="highlights">
+  <div class="sec-badge">HIGHLIGHTS</div>
+  <h2 class="sec-title">这一趟你会经历</h2>
+
+  <div class="exp-cards" style="margin-top:16px;">
+    <div class="exp-card img-slot" id="slot-5" data-slot="5" onclick="pickImage(5)">
+      <div class="placeholder"><span class="placeholder-icon">🖼️</span>点击选图 · 横图体验卡</div>
+      <div class="slot-label">横图⑥</div>
+      <div class="change-hint">点击替换</div>
+      <div class="exp-card-overlay" style="pointer-events:none;"></div>
+      <div class="exp-card-body" style="pointer-events:none;">
+        <div class="exp-card-icon">🌄</div>
+        <h4>三道瀑布 · 一网打尽</h4>
+        <p>浅滩戏水→中型飞瀑→终点巨瀑，一道比一道震撼</p>
+      </div>
+    </div>
+    <div class="exp-card img-slot" id="slot-6" data-slot="6" onclick="pickImage(6)">
+      <div class="placeholder"><span class="placeholder-icon">🖼️</span>点击选图 · 横图体验卡</div>
+      <div class="slot-label">横图⑦</div>
+      <div class="change-hint">点击替换</div>
+      <div class="exp-card-overlay" style="pointer-events:none;"></div>
+      <div class="exp-card-body" style="pointer-events:none;">
+        <div class="exp-card-icon">☀️</div>
+        <h4>摄影领队 · 墨涵掌镜</h4>
+        <p>全程跟拍不额外收费，你只管玩，出片交给墨涵</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ P4: 行程时间线 ═══════════ -->
+<div class="section" id="schedule">
+  <div class="sec-badge">ITINERARY</div>
+  <h2 class="sec-title">一日行程</h2>
+
+  <div class="day-label">5月30日（周六）</div>
+  <div class="timeline">
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-time">07:00</div><div class="tl-title">嘉州路集合出发</div><div class="tl-desc">包车前往贵州赤水，车上破冰相识，约2.5小时车程</div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-time">10:00</div><div class="tl-title">抵达徒步起点</div><div class="tl-desc">整理装备，换溯溪鞋，领队讲解安全注意事项</div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-time">10:15</div><div class="tl-title">溯溪开始 · 第一道瀑布</div><div class="tl-desc">浅滩戏水，墨涵掌镜抓拍玩水瞬间</div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-time">12:00</div><div class="tl-title">第二道瀑布 · 路餐休息</div><div class="tl-desc">中型瀑布前休整，自带路餐，广角仰拍瀑布全貌</div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-time">13:30</div><div class="tl-title">终点大型瀑布 · 尽情拍摄</div><div class="tl-desc">峡谷尽头巨瀑倾泻，水雾中拍逆光人像，全程最出片的地方</div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-time">15:00</div><div class="tl-title">原路折返</div><div class="tl-desc">沿途补拍遗漏机位，不急不赶</div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-time">17:00</div><div class="tl-title">回到起点 · 换衣服上车</div><div class="tl-desc">换上干衣服，休整补给</div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-time">约 20:00</div><div class="tl-title">回到重庆</div><div class="tl-desc">满载照片和回忆</div></div>
+  </div>
+</div>
+
+<!-- ═══════════ P5: 实拍画廊 ═══════════ -->
+<div class="section section-alt" id="gallery">
+  <div class="sec-badge">GALLERY</div>
+  <h2 class="sec-title">往期实拍</h2>
+  <p class="sec-desc">所有7张照片一览，点击可放大查看，也可点击任意图片替换。</p>
+
+  <div class="gallery-grid" id="galleryGrid">
+    <div class="gallery-item gallery-main img-slot" id="slot-g0" data-slot="0" onclick="pickImage(0)">
+      <div class="placeholder"><span class="placeholder-icon">🖼️</span>竖图①</div>
+      <div class="change-hint">点击替换</div>
+    </div>
+    <div class="gallery-item img-slot" id="slot-g1" data-slot="1" onclick="pickImage(1)">
+      <div class="placeholder"><span class="placeholder-icon">🖼️</span>竖图②</div>
+      <div class="change-hint">点击替换</div>
+    </div>
+    <div class="gallery-item img-slot" id="slot-g2" data-slot="2" onclick="pickImage(2)">
+      <div class="placeholder"><span class="placeholder-icon">🖼️</span>竖图③</div>
+      <div class="change-hint">点击替换</div>
+    </div>
+    <div class="gallery-item img-slot" id="slot-g3" data-slot="3" onclick="pickImage(3)">
+      <div class="placeholder"><span class="placeholder-icon">🖼️</span>竖图④</div>
+      <div class="change-hint">点击替换</div>
+    </div>
+    <div class="gallery-item img-slot" id="slot-g4" data-slot="4" onclick="pickImage(4)">
+      <div class="placeholder"><span class="placeholder-icon">🖼️</span>横图⑤</div>
+      <div class="change-hint">点击替换</div>
+    </div>
+    <div class="gallery-item img-slot" id="slot-g5" data-slot="5" onclick="pickImage(5)">
+      <div class="placeholder"><span class="placeholder-icon">🖼️</span>横图⑥</div>
+      <div class="change-hint">点击替换</div>
+    </div>
+    <div class="gallery-item gallery-wide img-slot" id="slot-g6" data-slot="6" onclick="pickImage(6)" style="aspect-ratio:3/2;">
+      <div class="placeholder"><span class="placeholder-icon">🖼️</span>横图⑦（宽幅）</div>
+      <div class="change-hint">点击替换</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ P6: 报名 ═══════════ -->
+<div class="section cta-section" id="signup">
+  <div class="sec-badge">JOIN US</div>
+  <h2 class="sec-title">一起去赤水</h2>
+  <p class="sec-desc" style="text-align:center;">198元/人 · 拼团价 · 37座大巴</p>
+
+  <div style="margin:16px 0;">
+    <div class="info-row" style="justify-content:center;">
+      <div class="info-item"><div class="info-dot"></div>5月30日（周六）</div>
+      <div class="info-item"><div class="info-dot"></div>嘉州路集合</div>
+    </div>
+  </div>
+
+  <div class="qr-box" style="border:none;overflow:hidden;"><img src="assets/images/jiamifeng/微信图片_20260526220821_24_166.jpg" style="width:100px;height:100px;object-fit:contain;"></div>
+
+  <a href="#" class="cta-btn" style="display:inline-flex;">微信咨询 / 报名 →</a>
+  <p style="margin-top:14px; font-size:12px; color:rgba(255,255,255,0.35);">
+    行摄无疆 视界由我
+  </p>
+</div>
+
+<div class="footer-bar">
+  © 云途视界户外俱乐部 · 让每一次出发都有意义
+</div>
+
+<!-- ═══════════ Lightbox ═══════════ -->
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <button class="lightbox-prev" onclick="prevImage()">‹</button>
+  <button class="lightbox-next" onclick="nextImage()">›</button>
+  <img src="" alt="" id="lightboxImg">
+</div>
+
+<!-- ═══════════ JS ═══════════ -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script>
+  // ── 图片管理（IndexedDB持久化 + data URL） ──
+  const TOTAL = 7;
+  const imageData = new Array(TOTAL).fill(null); // 存储 data URL (base64)
+  let currentPickSlot = -1;
+  const DB_NAME = 'yuntu_poster_chishui';
+  const DB_STORE = 'images';
+
+  // ── IndexedDB 封装 ──
+  function openDB() {
+    return new Promise((resolve, reject) => {
+      const req = indexedDB.open(DB_NAME, 1);
+      req.onupgradeneeded = () => { req.result.createObjectStore(DB_STORE); };
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+  }
+
+  async function saveImageToDB(slot, dataURL) {
+    const db = await openDB();
+    const tx = db.transaction(DB_STORE, 'readwrite');
+    tx.objectStore(DB_STORE).put(dataURL, 'img_' + slot);
+    return new Promise(r => { tx.oncomplete = r; });
+  }
+
+  async function loadAllFromDB() {
+    const db = await openDB();
+    const tx = db.transaction(DB_STORE, 'readonly');
+    const store = tx.objectStore(DB_STORE);
+    const results = [];
+    for (let i = 0; i < TOTAL; i++) {
+      results.push(new Promise(resolve => {
+        const req = store.get('img_' + i);
+        req.onsuccess = () => resolve(req.result || null);
+        req.onerror = () => resolve(null);
+      }));
+    }
+    return Promise.all(results);
+  }
+
+  // ── 页面启动时恢复图片 ──
+  (async function restoreImages() {
+    const saved = await loadAllFromDB();
+    let restored = 0;
+    for (let i = 0; i < TOTAL; i++) {
+      if (saved[i]) {
+        imageData[i] = saved[i];
+        applyImageToDOM(i, saved[i]);
+        restored++;
+      }
+    }
+    if (restored > 0) {
+      document.getElementById('doneBtn').style.display = 'flex';
+      if (typeof heroSwiper !== 'undefined') heroSwiper.update();
+    }
+  })();
+
+  // ── 文件选择器 ──
+  function pickImage(slot) {
+    currentPickSlot = slot;
+    const inp = document.getElementById('singleInput');
+    inp.value = '';
+    inp.click();
+  }
+
+  function singleImport(input) {
+    if (!input.files[0]) return;
+    readAndSetImage(currentPickSlot, input.files[0]);
+  }
+
+  function batchImport(input) {
+    if (!input.files.length) return;
+    const files = Array.from(input.files).sort((a,b) => a.name.localeCompare(b.name, 'zh'));
+    const count = Math.min(files.length, TOTAL);
+    let done = 0;
+    for (let i = 0; i < count; i++) {
+      readAndSetImage(i, files[i], () => {
+        done++;
+        if (done >= count) {
+          document.getElementById('doneBtn').style.display = 'flex';
+        }
+      });
+    }
+  }
+
+  // 核心：用 FileReader 读取为 data URL（解决 html2canvas 兼容性 + 持久化）
+  function readAndSetImage(slot, file, callback) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const dataURL = e.target.result;
+      imageData[slot] = dataURL;
+      applyImageToDOM(slot, dataURL);
+      saveImageToDB(slot, dataURL); // 持久化到 IndexedDB
+      if (callback) callback();
+      document.getElementById('doneBtn').style.display = 'flex';
+      if (typeof heroSwiper !== 'undefined') heroSwiper.update();
+    };
+    reader.readAsDataURL(file);
+  }
+
+  // 把 data URL 应用到页面上所有对应位置
+  function applyImageToDOM(slot, dataURL) {
+    updateSlotDOM(slot, dataURL);
+    updateSlotDOM('g' + slot, dataURL);
+    if (slot < 4) {
+      const slideImg = document.querySelector(`.slide-img[data-slot="${slot}"]`);
+      if (slideImg) { slideImg.src = dataURL; slideImg.style.display = 'block'; }
+    }
+  }
+
+  // 更新 slot DOM：优先用 <img> 标签（不用 background-image，方便 html2canvas 捕获）
+  function updateSlotDOM(id, dataURL) {
+    const el = document.getElementById('slot-' + id);
+    if (!el) return;
+    el.classList.add('has-image');
+
+    // 查找或创建 img 元素
+    let img = el.querySelector('img:not(.slide-img)');
+    if (!img) {
+      img = document.createElement('img');
+      img.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:2;';
+      el.appendChild(img);
+    }
+    img.src = dataURL;
+    img.style.display = 'block';
+
+    // 同时设置背景图作为fallback
+    el.style.backgroundImage = `url(${dataURL})`;
+    el.style.backgroundSize = 'cover';
+    el.style.backgroundPosition = 'center';
+  }
+
+  function scrollToTop() {
+    document.getElementById('top').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // ── Hero轮播 ──
+  let heroSwiper;
+  function initSwiper() {
+    heroSwiper = new Swiper('#heroSwiper', {
+      loop: true,
+      autoplay: { delay: 3500, disableOnInteraction: false },
+      speed: 800,
+      effect: 'fade',
+      fadeEffect: { crossFade: true },
+      pagination: { el: '.swiper-pagination', clickable: true },
+      touchRatio: 1,
+    });
+  }
+
+  // 延迟初始化swiper（等DOM ready）
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initSwiper);
+  } else {
+    initSwiper();
+  }
+
+  // ── Lightbox ──
+  function getImageURL(idx) {
+    return imageData[idx] || '';
+  }
+
+  let lbIdx = 0;
+  const lb = document.getElementById('lightbox');
+  const lbImg = document.getElementById('lightboxImg');
+
+  function openLightbox(idx) {
+    const url = getImageURL(idx);
+    if (!url) { pickImage(idx); return; }
+    lbIdx = idx;
+    lbImg.src = url;
+    lb.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLightbox() {
+    lb.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  function prevImage() {
+    for (let i = 0; i < TOTAL; i++) {
+      const idx = (lbIdx - 1 - i + TOTAL * 2) % TOTAL;
+      if (imageData[idx]) { lbIdx = idx; lbImg.src = imageData[idx]; return; }
+    }
+  }
+
+  function nextImage() {
+    for (let i = 0; i < TOTAL; i++) {
+      const idx = (lbIdx + 1 + i) % TOTAL;
+      if (imageData[idx]) { lbIdx = idx; lbImg.src = imageData[idx]; return; }
+    }
+  }
+
+  lb.addEventListener('click', function(e) { if (e.target === lb) closeLightbox(); });
+  document.addEventListener('keydown', function(e) {
+    if (!lb.classList.contains('active')) return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowLeft') prevImage();
+    if (e.key === 'ArrowRight') nextImage();
+  });
+
+  let touchX = 0;
+  lb.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; });
+  lb.addEventListener('touchend', e => {
+    const diff = touchX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) { diff > 0 ? nextImage() : prevImage(); }
+  });
+
+  // ── 生成长图分享 ──
+  let lastCaptureCanvas = null; // 保存最近生成的海报canvas，供下载用
+
+  async function capturePage() {
+    const loading = document.getElementById('captureLoading');
+    const captureBar = document.getElementById('captureBar');
+    const toolbar = document.getElementById('toolbar');
+
+    toolbar.style.display = 'none';
+    captureBar.style.display = 'none';
+    loading.classList.add('active');
+
+    const hasImages = imageData.some(d => d !== null);
+    if (!hasImages) {
+      loading.classList.remove('active');
+      toolbar.style.display = '';
+      captureBar.style.display = '';
+      alert('请先导入图片再生成长图');
+      return;
+    }
+
+    const poster = buildPosterDOM();
+    poster.style.position = 'absolute';
+    poster.style.left = '-9999px';
+    poster.style.top = '0';
+    poster.style.zIndex = '-1';
+    document.body.appendChild(poster);
+
+    await new Promise(r => setTimeout(r, 500));
+
+    try {
+      const canvas = await html2canvas(poster, {
+        useCORS: true,
+        allowTaint: true,
+        scale: 2,
+        backgroundColor: '#1a1a2e',
+        width: 480,
+        height: poster.scrollHeight,
+        windowWidth: 480,
+        windowHeight: poster.scrollHeight,
+      });
+
+      lastCaptureCanvas = canvas; // 存下来供保存按钮使用
+
+      const imgData = canvas.toDataURL('image/png');
+      const result = document.getElementById('captureResult');
+      const img = document.getElementById('captureImg');
+      img.src = imgData;
+      result.classList.add('active');
+    } catch (err) {
+      alert('生成失败: ' + err.message);
+    }
+
+    document.body.removeChild(poster);
+    loading.classList.remove('active');
+    toolbar.style.display = '';
+    captureBar.style.display = '';
+  }
+
+  function saveImage() {
+    if (!lastCaptureCanvas) {
+      alert('请先生成长图');
+      return;
+    }
+    // 将canvas转成blob，触发下载
+    lastCaptureCanvas.toBlob(function(blob) {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = '赤水瀑布群海报_云途视界.png';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      // 延迟释放URL
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }, 'image/png');
+  }
+
+  // ── 多图导出（微信图片轮播） ──
+  let sectionCanvases = []; // 存储每张section的canvas
+
+  async function captureSections() {
+    const loading = document.getElementById('captureLoading');
+    const loadingText = document.getElementById('captureLoadingText');
+    const captureBar = document.getElementById('captureBar');
+    const toolbar = document.getElementById('toolbar');
+
+    const hasImages = imageData.some(d => d !== null);
+    if (!hasImages) {
+      alert('请先导入图片再生成长图');
+      return;
+    }
+
+    toolbar.style.display = 'none';
+    captureBar.style.display = 'none';
+    loading.classList.add('active');
+    sectionCanvases = [];
+
+    const sections = buildPosterSections();
+    const W = 480;
+
+    for (let i = 0; i < sections.length; i++) {
+      loadingText.textContent = `正在生成第 ${i+1}/${sections.length} 张...`;
+
+      const el = sections[i];
+      el.style.position = 'absolute';
+      el.style.left = '-9999px';
+      el.style.top = '0';
+      el.style.zIndex = '-1';
+      document.body.appendChild(el);
+
+      await new Promise(r => setTimeout(r, 300));
+
+      try {
+        const canvas = await html2canvas(el, {
+          useCORS: true, allowTaint: true, scale: 2,
+          backgroundColor: '#1a1a2e',
+          width: W, height: el.scrollHeight,
+          windowWidth: W, windowHeight: el.scrollHeight,
+        });
+        sectionCanvases.push(canvas);
+      } catch (err) {
+        sectionCanvases.push(null);
+      }
+
+      document.body.removeChild(el);
+    }
+
+    loading.classList.remove('active');
+    toolbar.style.display = '';
+    captureBar.style.display = '';
+
+    // 显示结果
+    const result = document.getElementById('captureMultiResult');
+    const list = document.getElementById('multiImageList');
+    list.innerHTML = '';
+
+    const names = ['封面', '神山介绍', '行程体验', '一日行程', '往期实拍', '报名信息'];
+
+    sectionCanvases.forEach((canvas, i) => {
+      if (!canvas) return;
+      const imgData = canvas.toDataURL('image/png');
+
+      const card = document.createElement('div');
+      card.className = 'multi-card';
+
+      const img = document.createElement('img');
+      img.src = imgData;
+      card.appendChild(img);
+
+      const footer = document.createElement('div');
+      footer.className = 'multi-card-footer';
+      footer.innerHTML = `<span>${i+1}. ${names[i] || '第'+(i+1)+'张'}</span>`;
+
+      const btn = document.createElement('button');
+      btn.textContent = '💾 保存';
+      btn.onclick = (function(c, idx) {
+        return function() {
+          c.toBlob(function(blob) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `赤水瀑布群_${idx+1}_${names[idx] || idx+1}.png`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+          }, 'image/png');
+        };
+      })(canvas, i);
+      footer.appendChild(btn);
+      card.appendChild(footer);
+      list.appendChild(card);
+    });
+
+    result.classList.add('active');
+  }
+
+  function closeMultiResult() {
+    document.getElementById('captureMultiResult').classList.remove('active');
+  }
+
+  // ── 构建海报分节DOM（每节独立导出） ──
+  function buildPosterSections() {
+    const W = 480;
+    const sections = [];
+
+    // 封面区
+    const heroImg = imageData[0] || imageData.find(d => d);
+    const hero = mkDiv(`width:${W}px;background:#1a1a2e;color:#fff;font-family:'Noto Sans SC',sans-serif;`);
+    const heroInner = mkDiv(`width:100%;height:${Math.round(W*1.4)}px;position:relative;overflow:hidden;background:#0f1825;`);
+    if (heroImg) {
+      const img = document.createElement('img');
+      img.src = heroImg;
+      img.style.cssText = 'width:100%;height:100%;object-fit:cover;position:absolute;inset:0;';
+      heroInner.appendChild(img);
+    }
+    heroInner.appendChild(mkDiv('position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.25) 50%, rgba(0,0,0,0.78) 78%, rgba(0,0,0,0.9) 100%);'));
+    heroInner.appendChild(mkDiv('position:absolute;top:18px;left:24px;z-index:5;',
+      '<img src="assets/images/jiamifeng/logo.png" alt="云途视界" style="height:28px;filter:brightness(0) invert(1);">'));
+    const infoBox = mkDiv('position:absolute;bottom:0;left:0;right:0;z-index:5;padding:0 28px 36px;');
+    infoBox.innerHTML = `
+      <div style="display:inline-block;font-size:11px;letter-spacing:3px;color:#FF6B35;border:1px solid rgba(255,107,53,0.4);border-radius:4px;padding:4px 10px;margin-bottom:14px;font-weight:500;">贵州赤水 · 1天溯溪</div>
+      <h1 style="font-family:'Ma Shan Zheng',cursive;font-size:48px;font-weight:400;letter-spacing:4px;line-height:1.25;margin:0 0 6px;">赤水瀑布群<span style="color:#FF6B35;">·</span><br>溯溪</h1>
+      <p style="font-family:'Ma Shan Zheng',cursive;font-size:18px;color:rgba(255,255,255,0.85);margin:0 0 14px;line-height:1.6;">三道瀑布，六公里溪谷，<br>初夏第一场溯溪</p>
+      <div style="display:flex;gap:16px;font-size:13px;color:rgba(255,255,255,0.85);margin-bottom:18px;">
+        <span><span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:#FF6B35;margin-right:5px;vertical-align:middle;"></span>5月30日（周六）</span>
+        <span><span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:#FF6B35;margin-right:5px;vertical-align:middle;"></span>嘉州路集合</span>
+        <span><span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:#FF6B35;margin-right:5px;vertical-align:middle;"></span>6km折返 · 溯溪</span>
+      </div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.4);letter-spacing:1px;">行摄无疆 视界由我</div>`;
+    heroInner.appendChild(infoBox);
+    hero.appendChild(heroInner);
+    sections.push(hero);
+
+    // 神山介绍
+    sections.push(sectionBlock(
+      'DESTINATION', '贵州赤水瀑布群',
+      '赤水瀑布群，位于贵州赤水丹霞地貌区。三条瀑布沿六公里溪谷依次展开——浅滩戏水、中型飞瀑、终点巨瀑。全程溪流相伴、栈道穿行、水雾沁人。尚未商业化的小众玩水秘境，初夏第一场溯溪就从这里开始。',
+      imageData[4],
+      [{ num:'6', unit:'km', label:'徒步距离' },{ num:'200', unit:'m', label:'累计爬升' },{ num:'4', unit:'h', label:'往返耗时' },{ num:'★★', unit:'', label:'难度 · 新手友好' }]
+    ));
+
+    // 三大体验
+    const expSec = mkDiv(`width:${W}px;background:#0f1825;color:#fff;font-family:'Noto Sans SC',sans-serif;padding:44px 24px;`);
+    expSec.innerHTML = `<div style="font-size:10px;letter-spacing:3px;color:#FF6B35;margin-bottom:10px;font-weight:600;">HIGHLIGHTS</div><h2 style="font-family:'Ma Shan Zheng',cursive;font-size:26px;font-weight:400;margin:0 0 16px;letter-spacing:2px;">这一趟你会经历</h2>`;
+    [{ icon:'💧', title:'三道瀑布 · 一网打尽', desc:'浅滩戏水→中型飞瀑→终点巨瀑，一道比一道震撼', img: imageData[5] },
+     { icon:'📸', title:'摄影领队 · 墨涵掌镜', desc:'全程跟拍不额外收费，你只管玩，出片交给墨涵', img: imageData[6] }].forEach(card => {
+      const ce = mkDiv('position:relative;border-radius:16px;overflow:hidden;height:200px;margin-bottom:12px;');
+      if (card.img) { const im = document.createElement('img'); im.src = card.img; im.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;'; ce.appendChild(im); }
+      else { ce.style.background = 'rgba(255,255,255,0.04)'; }
+      ce.appendChild(mkDiv('position:absolute;inset:0;z-index:1;background:linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.78) 100%);'));
+      ce.appendChild(mkDiv('position:relative;z-index:2;padding:18px;', `<div style="font-size:24px;margin-bottom:4px;">${card.icon}</div><h4 style="font-size:17px;font-weight:700;margin:0 0 4px;">${card.title}</h4><p style="font-size:12px;color:rgba(255,255,255,0.7);line-height:1.5;margin:0;">${card.desc}</p>`));
+      expSec.appendChild(ce);
+    });
+    sections.push(expSec);
+
+    // 行程时间线
+    const schSec = mkDiv(`width:${W}px;background:#1a1a2e;color:#fff;font-family:'Noto Sans SC',sans-serif;padding:44px 24px;`);
+    schSec.innerHTML = `<div style="font-size:10px;letter-spacing:3px;color:#FF6B35;margin-bottom:10px;font-weight:600;">ITINERARY</div><h2 style="font-family:'Ma Shan Zheng',cursive;font-size:26px;font-weight:400;margin:0 0 6px;letter-spacing:2px;">一日行程</h2>`;
+    schSec.appendChild(dayTimeline('5月30日（周六）', [['07:00','嘉州路集合出发','包车前往贵州赤水，约2.5小时车程'],['10:00','抵达徒步起点','整理装备，换溯溪鞋，领队讲解安全注意事项'],['10:15','溯溪开始 · 第一道瀑布','浅滩戏水，墨涵掌镜抓拍玩水瞬间'],['12:00','第二道瀑布 · 路餐休息','中型瀑布前休整，自带路餐，广角仰拍瀑布全貌'],['13:30','终点大型瀑布 · 尽情拍摄','峡谷尽头巨瀑倾泻，水雾中拍逆光人像，全程最出片的地方'],['15:00','原路折返','沿途补拍遗漏机位，不急不赶'],['17:00','回到起点 · 换衣服上车','换上干衣服，休整补给'],['约 20:00','回到重庆','满载照片和回忆']]));
+    
+    sections.push(schSec);
+
+    // 实拍画廊
+    const galSec = mkDiv(`width:${W}px;background:#0f1825;color:#fff;font-family:'Noto Sans SC',sans-serif;padding:44px 24px;`);
+    galSec.innerHTML = `<div style="font-size:10px;letter-spacing:3px;color:#FF6B35;margin-bottom:10px;font-weight:600;">GALLERY</div><h2 style="font-family:'Ma Shan Zheng',cursive;font-size:26px;font-weight:400;margin:0 0 16px;letter-spacing:2px;">往期实拍</h2>`;
+    const grid = mkDiv('display:grid;grid-template-columns:1fr 1fr;gap:8px;');
+    imageData.forEach((d, i) => {
+      if (!d) return;
+      const item = mkDiv('border-radius:10px;overflow:hidden;' + (i === 6 ? 'grid-column:span 2;aspect-ratio:3/2;' : 'aspect-ratio:1;'));
+      const im = document.createElement('img'); im.src = d; im.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
+      item.appendChild(im); grid.appendChild(item);
+    });
+    galSec.appendChild(grid);
+    sections.push(galSec);
+
+    // 报名区
+    const ctaSec = mkDiv(`width:${W}px;background:#1a1a2e;color:#fff;font-family:'Noto Sans SC',sans-serif;padding:44px 24px;text-align:center;`);
+    ctaSec.innerHTML = `
+      <div style="font-size:10px;letter-spacing:3px;color:#FF6B35;margin-bottom:10px;font-weight:600;">JOIN US</div>
+      <h2 style="font-family:'Ma Shan Zheng',cursive;font-size:26px;font-weight:400;margin:0 0 6px;letter-spacing:2px;">一起去赤水</h2>
+      <p style="font-size:14px;color:rgba(255,255,255,0.6);margin:0 0 16px;">198元/人 · 拼团价 · 37座大巴</p>
+      <div style="display:flex;justify-content:center;gap:16px;font-size:13px;color:rgba(255,255,255,0.85);margin-bottom:20px;">
+        <span><span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:#FF6B35;margin-right:5px;vertical-align:middle;"></span>5月30日（周六）</span>
+        <span><span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:#FF6B35;margin-right:5px;vertical-align:middle;"></span>嘉州路集合</span>
+      </div>
+      <div style="width:100px;height:100px;border-radius:14px;margin:0 auto 16px;overflow:hidden;"><img src="assets/images/jiamifeng/微信图片_20260526220821_24_166.jpg" style="width:100px;height:100px;object-fit:contain;"></div>
+      <div style="display:inline-block;padding:14px 40px;background:linear-gradient(135deg,#FF6B35,#e55a2b);color:#fff;border-radius:30px;font-size:16px;font-weight:600;letter-spacing:1px;">微信咨询 / 报名 →</div>
+      <p style="margin-top:14px;font-size:12px;color:rgba(255,255,255,0.35);">行摄无疆 视界由我</p>`;
+    sections.push(ctaSec);
+
+    return sections;
+  }
+
+  function buildPosterDOM() {
+    const W = 480;
+    const container = document.createElement('div');
+    container.style.cssText = `
+      width:${W}px; background:#1a1a2e; color:#fff; font-family:'Noto Sans SC',sans-serif;
+      padding-bottom:20px;
+    `;
+
+    // ── 封面区 ──
+    const heroImg = imageData[0] || imageData.find(d => d);
+    const hero = mkDiv(`
+      width:100%; height:${Math.round(W*1.4)}px; position:relative; overflow:hidden;
+      background:#0f1825;
+    `);
+    if (heroImg) {
+      const img = document.createElement('img');
+      img.src = heroImg;
+      img.style.cssText = 'width:100%;height:100%;object-fit:cover;position:absolute;inset:0;';
+      hero.appendChild(img);
+    }
+    // 渐变遮罩
+    hero.appendChild(mkDiv(`
+      position:absolute;inset:0;
+      background:linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.25) 50%, rgba(0,0,0,0.78) 78%, rgba(0,0,0,0.9) 100%);
+    `));
+    // Logo
+    hero.appendChild(mkDiv('position:absolute;top:18px;left:24px;z-index:5;',
+      '<img src="assets/images/jiamifeng/logo.png" alt="云途视界" style="height:28px;filter:brightness(0) invert(1);">'));
+    // 底部信息
+    const infoBox = mkDiv(`
+      position:absolute;bottom:0;left:0;right:0;z-index:5;padding:0 28px 36px;
+    `);
+    infoBox.innerHTML = `
+      <div style="display:inline-block;font-size:11px;letter-spacing:3px;color:#FF6B35;border:1px solid rgba(255,107,53,0.4);border-radius:4px;padding:4px 10px;margin-bottom:14px;font-weight:500;">贵州赤水 · 1天溯溪</div>
+      <h1 style="font-family:'Ma Shan Zheng',cursive;font-size:48px;font-weight:400;letter-spacing:4px;line-height:1.25;margin:0 0 6px;">赤水瀑布群<span style="color:#FF6B35;">·</span><br>溯溪</h1>
+      <p style="font-family:'Ma Shan Zheng',cursive;font-size:18px;color:rgba(255,255,255,0.85);margin:0 0 14px;line-height:1.6;">三道瀑布，六公里溪谷，<br>初夏第一场溯溪</p>
+      <div style="display:flex;gap:16px;font-size:13px;color:rgba(255,255,255,0.85);margin-bottom:18px;">
+        <span><span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:#FF6B35;margin-right:5px;vertical-align:middle;"></span>5月30日（周六）</span>
+        <span><span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:#FF6B35;margin-right:5px;vertical-align:middle;"></span>嘉州路集合</span>
+        <span><span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:#FF6B35;margin-right:5px;vertical-align:middle;"></span>6km折返 · 溯溪</span>
+      </div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.4);letter-spacing:1px;">行摄无疆 视界由我</div>
+    `;
+    hero.appendChild(infoBox);
+    container.appendChild(hero);
+
+    // ── 神山介绍 ──
+    container.appendChild(sectionBlock(
+      'DESTINATION', '贵州赤水瀑布群',
+      '赤水瀑布群，位于贵州赤水丹霞地貌区。三条瀑布沿六公里溪谷依次展开——浅滩戏水、中型飞瀑、终点巨瀑。全程溪流相伴、栈道穿行、水雾沁人。尚未商业化的小众玩水秘境，初夏第一场溯溪就从这里开始。',
+      imageData[4],
+      [
+        { num:'6', unit:'km', label:'徒步距离' },
+        { num:'200', unit:'m', label:'累计爬升' },
+        { num:'4', unit:'h', label:'往返耗时' },
+        { num:'★★', unit:'', label:'难度 · 新手友好' }
+      ]
+    ));
+
+    // ── 三大体验 ──
+    const expSection = mkDiv('padding:44px 24px;background:#0f1825;');
+    expSection.innerHTML = `
+      <div style="font-size:10px;letter-spacing:3px;color:#FF6B35;margin-bottom:10px;font-weight:600;">HIGHLIGHTS</div>
+      <h2 style="font-family:'Ma Shan Zheng',cursive;font-size:26px;font-weight:400;margin:0 0 16px;letter-spacing:2px;">这一趟你会经历</h2>
+    `;
+    // 体验卡片
+    [
+      { icon:'💧', title:'三道瀑布 · 一网打尽', desc:'浅滩戏水→中型飞瀑→终点巨瀑，一道比一道震撼', img: imageData[5] },
+      { icon:'📸', title:'摄影领队 · 墨涵掌镜', desc:'全程跟拍不额外收费，你只管玩，出片交给墨涵', img: imageData[6] }
+    ].forEach(card => {
+      const cardEl = mkDiv(`
+        position:relative;border-radius:16px;overflow:hidden;height:200px;margin-bottom:12px;
+      `);
+      if (card.img) {
+        const img = document.createElement('img');
+        img.src = card.img;
+        img.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;';
+        cardEl.appendChild(img);
+      } else {
+        cardEl.style.background = 'rgba(255,255,255,0.04)';
+      }
+      cardEl.appendChild(mkDiv(`
+        position:absolute;inset:0;z-index:1;
+        background:linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.78) 100%);
+      `));
+      cardEl.appendChild(mkDiv('position:relative;z-index:2;padding:18px;', `
+        <div style="font-size:24px;margin-bottom:4px;">${card.icon}</div>
+        <h4 style="font-size:17px;font-weight:700;margin:0 0 4px;">${card.title}</h4>
+        <p style="font-size:12px;color:rgba(255,255,255,0.7);line-height:1.5;margin:0;">${card.desc}</p>
+      `));
+      expSection.appendChild(cardEl);
+    });
+    container.appendChild(expSection);
+
+    // ── 行程时间线 ──
+    const schSection = mkDiv('padding:44px 24px;');
+    schSection.innerHTML = `
+      <div style="font-size:10px;letter-spacing:3px;color:#FF6B35;margin-bottom:10px;font-weight:600;">ITINERARY</div>
+      <h2 style="font-family:'Ma Shan Zheng',cursive;font-size:26px;font-weight:400;margin:0 0 6px;letter-spacing:2px;">一日行程</h2>
+    `;
+    schSection.appendChild(dayTimeline('5月30日（周六）', [
+      ['07:00','嘉州路集合出发','包车前往贵州赤水，约2.5小时车程'],
+      ['10:00','抵达徒步起点','整理装备，换溯溪鞋，领队讲解安全注意事项'],
+      ['10:15','溯溪开始 · 第一道瀑布','浅滩戏水，墨涵掌镜抓拍玩水瞬间'],
+      ['12:00','第二道瀑布 · 路餐休息','中型瀑布前休整，自带路餐，广角仰拍瀑布全貌'],
+      ['13:30','终点大型瀑布 · 尽情拍摄','峡谷尽头巨瀑倾泻，水雾中拍逆光人像，全程最出片的地方'],
+      ['15:00','原路折返','沿途补拍遗漏机位，不急不赶'],
+      ['17:00','回到起点 · 换衣服上线','换上干衣服，休整补给'],
+      ['约 20:00','回到重庆','满载照片和回忆'],
+    ]));
+    
+    container.appendChild(schSection);
+
+    // ── 实拍画廊 ──
+    const galSection = mkDiv('padding:44px 24px;background:#0f1825;');
+    galSection.innerHTML = `
+      <div style="font-size:10px;letter-spacing:3px;color:#FF6B35;margin-bottom:10px;font-weight:600;">GALLERY</div>
+      <h2 style="font-family:'Ma Shan Zheng',cursive;font-size:26px;font-weight:400;margin:0 0 16px;letter-spacing:2px;">往期实拍</h2>
+    `;
+    const grid = mkDiv('display:grid;grid-template-columns:1fr 1fr;gap:8px;');
+    imageData.forEach((d, i) => {
+      if (!d) return;
+      const item = mkDiv('border-radius:10px;overflow:hidden;' + (i === 6 ? 'grid-column:span 2;aspect-ratio:3/2;' : 'aspect-ratio:1;'));
+      const img = document.createElement('img');
+      img.src = d;
+      img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
+      item.appendChild(img);
+      grid.appendChild(item);
+    });
+    galSection.appendChild(grid);
+    container.appendChild(galSection);
+
+    // ── 报名区 ──
+    const ctaSection = mkDiv('padding:44px 24px;text-align:center;');
+    ctaSection.innerHTML = `
+      <div style="font-size:10px;letter-spacing:3px;color:#FF6B35;margin-bottom:10px;font-weight:600;">JOIN US</div>
+      <h2 style="font-family:'Ma Shan Zheng',cursive;font-size:26px;font-weight:400;margin:0 0 6px;letter-spacing:2px;">一起去赤水</h2>
+      <p style="font-size:14px;color:rgba(255,255,255,0.6);margin:0 0 16px;">198元/人 · 拼团价 · 37座大巴</p>
+      <div style="display:flex;justify-content:center;gap:16px;font-size:13px;color:rgba(255,255,255,0.85);margin-bottom:20px;">
+        <span><span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:#FF6B35;margin-right:5px;vertical-align:middle;"></span>5月30日（周六）</span>
+        <span><span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:#FF6B35;margin-right:5px;vertical-align:middle;"></span>嘉州路集合</span>
+      </div>
+      <div style="width:100px;height:100px;border-radius:14px;margin:0 auto 16px;overflow:hidden;"><img src="assets/images/jiamifeng/微信图片_20260526220821_24_166.jpg" style="width:100px;height:100px;object-fit:contain;"></div>
+      <div style="display:inline-block;padding:14px 40px;background:linear-gradient(135deg,#FF6B35,#e55a2b);color:#fff;border-radius:30px;font-size:16px;font-weight:600;letter-spacing:1px;">微信咨询 / 报名 →</div>
+      <p style="margin-top:14px;font-size:12px;color:rgba(255,255,255,0.35);">行摄无疆 视界由我</p>
+    `;
+    container.appendChild(ctaSection);
+
+    // Footer
+    container.appendChild(mkDiv('text-align:center;padding:20px;font-size:11px;color:rgba(255,255,255,0.25);border-top:1px solid rgba(255,255,255,0.05);',
+      '© 云途视界户外俱乐部 · 让每一次出发都有意义'
+    ));
+
+    return container;
+  }
+
+  // ── 构建辅助函数 ──
+  function mkDiv(style, html) {
+    const d = document.createElement('div');
+    d.style.cssText = style;
+    if (html) d.innerHTML = html;
+    return d;
+  }
+
+  function sectionBlock(badge, title, desc, imgDataURL, stats) {
+    const sec = mkDiv('padding:44px 24px;background:#1a1a2e;');
+    let h = `<div style="font-size:10px;letter-spacing:3px;color:#FF6B35;margin-bottom:10px;font-weight:600;">${badge}</div>`;
+    h += `<h2 style="font-family:'Ma Shan Zheng',cursive;font-size:26px;font-weight:400;margin:0 0 6px;letter-spacing:2px;">${title}</h2>`;
+    h += `<p style="font-size:14px;color:rgba(255,255,255,0.6);line-height:1.8;margin:0 0 20px;">${desc}</p>`;
+    sec.innerHTML = h;
+
+    if (imgDataURL) {
+      const imgDiv = mkDiv('width:100%;height:240px;border-radius:16px;margin-bottom:20px;overflow:hidden;position:relative;');
+      const img = document.createElement('img');
+      img.src = imgDataURL;
+      img.style.cssText = 'width:100%;height:100%;object-fit:cover;';
+      imgDiv.appendChild(img);
+      sec.appendChild(imgDiv);
+    }
+
+    const grid = mkDiv('display:grid;grid-template-columns:1fr 1fr;gap:10px;');
+    stats.forEach(s => {
+      grid.appendChild(mkDiv('background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:18px 14px;', `
+        <div style="font-size:26px;font-weight:900;color:#FF6B35;line-height:1;margin-bottom:4px;">${s.num}<span style="font-size:13px;font-weight:400;">${s.unit}</span></div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.5);">${s.label}</div>
+      `));
+    });
+    sec.appendChild(grid);
+    return sec;
+  }
+
+  function dayTimeline(dayLabel, items) {
+    const wrap = mkDiv('');
+    wrap.innerHTML = `<div style="display:inline-block;font-size:10px;letter-spacing:2px;background:rgba(255,107,53,0.12);color:#FF6B35;padding:4px 12px;border-radius:20px;margin-bottom:12px;margin-top:4px;">${dayLabel}</div>`;
+    const tl = mkDiv('position:relative;padding-left:26px;');
+    tl.innerHTML = '<div style="position:absolute;left:7px;top:0;bottom:0;width:1.5px;background:rgba(255,107,53,0.25);border-radius:1px;"></div>';
+    items.forEach(item => {
+      tl.appendChild(mkDiv('position:relative;margin-bottom:18px;', `
+        <div style="position:absolute;left:-19px;top:3px;width:10px;height:10px;border-radius:50%;background:#FF6B35;border:2px solid rgba(255,107,53,0.35);"></div>
+        <div style="font-size:12px;color:#FF6B35;font-weight:600;margin-bottom:2px;">${item[0]}</div>
+        <div style="font-size:15px;font-weight:600;margin-bottom:2px;">${item[1]}</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.55);line-height:1.5;">${item[2]}</div>
+      `));
+    });
+    wrap.appendChild(tl);
+    return wrap;
+  }
+
+  function closeCaptureResult() {
+    document.getElementById('captureResult').classList.remove('active');
+  }
+
+  // ── 画廊grid中每张图点lightbox ──
+  document.getElementById('galleryGrid').addEventListener('click', function(e) {
+    const slot = e.target.closest('[data-slot]');
+    if (slot && slot.dataset.slot !== undefined) {
+      const idx = parseInt(slot.dataset.slot);
+      if (imageData[idx]) openLightbox(idx);
+    }
+  });
+</script>
+
+</body>
+</html>
